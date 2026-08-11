@@ -1,0 +1,159 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-heading);
+  --font-mono: ui-monospace, monospace;
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-surface: var(--surface);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-surface-sage: var(--surface-sage);
+  --color-surface-gold: var(--surface-gold);
+  --color-focus-ring: var(--focus-ring);
+
+  --color-brand-navy-950: var(--brand-navy-950);
+  --color-brand-navy-900: var(--brand-navy-900);
+  --color-brand-navy-800: var(--brand-navy-800);
+  --color-brand-navy-700: var(--brand-navy-700);
+  --color-brand-sage-800: var(--brand-sage-800);
+  --color-brand-sage-700: var(--brand-sage-700);
+  --color-brand-sage-600: var(--brand-sage-600);
+  --color-brand-sage-300: var(--brand-sage-300);
+  --color-brand-sage-200: var(--brand-sage-200);
+  --color-brand-sage-100: var(--brand-sage-100);
+  --color-brand-gold-700: var(--brand-gold-700);
+  --color-brand-gold-600: var(--brand-gold-600);
+  --color-brand-gold-500: var(--brand-gold-500);
+  --color-brand-gold-300: var(--brand-gold-300);
+  --color-brand-gold-100: var(--brand-gold-100);
+  --color-brand-cream-100: var(--brand-cream-100);
+  --color-brand-cream-200: var(--brand-cream-200);
+  --color-brand-cream-300: var(--brand-cream-300);
+
+  --radius-sm: var(--radius-token-sm);
+  --radius-md: var(--radius-token-md);
+  --radius-lg: var(--radius-token-lg);
+  --radius-pill: var(--radius-token-pill);
+  --radius-xl: var(--radius-token-lg);
+  --radius-2xl: var(--radius-token-lg);
+}
+
+:root {
+  /* Brand primitives — docs/03-ThemeGuideline.md section 3.3 */
+  --brand-navy-950: #142038;
+  --brand-navy-900: #1f2e4d;
+  --brand-navy-800: #2b3d60;
+  --brand-navy-700: #3b4f72;
+
+  --brand-sage-800: #4f6f54;
+  --brand-sage-700: #5d7d62;
+  --brand-sage-600: #6b8e6f;
+  --brand-sage-300: #b9ccb8;
+  --brand-sage-200: #d6e2d2;
+  --brand-sage-100: #edf3eb;
+
+  --brand-gold-700: #9f813e;
+  --brand-gold-600: #b4944d;
+  --brand-gold-500: #c9a961;
+  --brand-gold-300: #e7d6a6;
+  --brand-gold-100: #f8f1dd;
+
+  --brand-cream-100: #fffdf8;
+  --brand-cream-200: #faf6ee;
+  --brand-cream-300: #f1eadf;
+
+  --neutral-white: #ffffff;
+  --neutral-ink: #172033;
+  --neutral-muted: #657083;
+  --neutral-border: #dcd8cf;
+  --neutral-error: #9f2f2f;
+  --neutral-success: #3f6f4a;
+  --neutral-warning: #8a6826;
+
+  /* Semantic tokens */
+  --background: var(--brand-cream-100);
+  --foreground: var(--brand-navy-900);
+  --card: var(--neutral-white);
+  --card-foreground: var(--brand-navy-900);
+  --popover: var(--neutral-white);
+  --popover-foreground: var(--brand-navy-900);
+  --surface: var(--neutral-white);
+  --surface-subtle: var(--brand-cream-200);
+  --surface-sage: var(--brand-sage-100);
+  --surface-gold: var(--brand-gold-100);
+  --border: var(--neutral-border);
+  --input: var(--neutral-border);
+  --muted: var(--brand-cream-200);
+  --muted-foreground: var(--neutral-muted);
+  --accent: var(--brand-sage-100);
+  --accent-foreground: var(--brand-navy-900);
+  --primary: var(--brand-gold-500);
+  --primary-foreground: var(--brand-navy-950);
+  --secondary: var(--brand-sage-800);
+  --secondary-foreground: var(--neutral-white);
+  --focus-ring: var(--brand-sage-700);
+  --ring: var(--brand-sage-700);
+  --destructive: var(--neutral-error);
+
+  --sidebar: var(--brand-cream-200);
+  --sidebar-foreground: var(--brand-navy-900);
+  --sidebar-primary: var(--brand-gold-500);
+  --sidebar-primary-foreground: var(--brand-navy-950);
+  --sidebar-accent: var(--brand-sage-100);
+  --sidebar-accent-foreground: var(--brand-navy-900);
+  --sidebar-border: var(--neutral-border);
+  --sidebar-ring: var(--brand-sage-700);
+
+  /* Radius scale — section 3.6 */
+  --radius-token-sm: 10px;
+  --radius-token-md: 16px;
+  --radius-token-lg: 24px;
+  --radius-token-pill: 999px;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-heading;
+  }
+}
