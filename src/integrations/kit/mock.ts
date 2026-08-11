@@ -1,4 +1,5 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import type { EmailProvider, KitSubscriber, UpsertSubscriberInput, ApplyTagInput, RemoveTagInput } from "./types";
 
 export function createMockEmailProvider(): EmailProvider {
@@ -9,8 +10,12 @@ export function createMockEmailProvider(): EmailProvider {
     async upsertSubscriber(input: UpsertSubscriberInput) {
       const existing = subscribersByEmail.get(input.email);
       if (existing) return existing;
+      // randomUUID rather than a counter: tests and job runs each create a
+      // fresh mock instance but write kitSubscriberId into the same real
+      // DB, which enforces uniqueness — a per-instance counter starting
+      // back at 1 would collide across instances.
       const subscriber: KitSubscriber = {
-        id: `mock-subscriber-${subscribersByEmail.size + 1}`,
+        id: `mock-subscriber-${randomUUID()}`,
         email: input.email,
       };
       subscribersByEmail.set(input.email, subscriber);

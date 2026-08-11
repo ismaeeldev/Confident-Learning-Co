@@ -1,5 +1,5 @@
 import "server-only";
-import { and, eq, lte } from "drizzle-orm";
+import { and, eq, inArray, lte, sql } from "drizzle-orm";
 import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
 import {
   integrationJobs,
@@ -56,6 +56,8 @@ export interface ClaimedJob {
   input: Record<string, unknown>;
   attempts: number;
   maxAttempts: number;
+  contactId: string | null;
+  accessGrantId: string | null;
 }
 
 /**
@@ -69,18 +71,32 @@ export async function claimDueJobs(
   provider: Provider,
   limit = 20,
 ): Promise<ClaimedJob[]> {
-  const due = await db
+  // Status must be filtered in SQL, before LIMIT is applied — otherwise
+  // old succeeded/dead/failed rows matching provider+runAfter can fill the
+  // limit window ahead of the actual queued/retrying rows we want.
+  //
+  // Compares runAfter against Postgres's own now() rather than a JS
+  // `new Date()` — runAfter is written using the DB's clock (defaultNow()
+  // / this file's own `new Date()` sent as a parameter, but ultimately
+  // compared against the DB server's now() here), so comparing against a
+  // separately-computed local timestamp risks a race if the app server's
+  // clock lags the database's by even a fraction of a second: a job
+  // queued a moment ago can look like it's still "in the future" and get
+  // silently skipped. Letting Postgres compare against its own clock on
+  // both sides removes that skew entirely.
+  const claimable = await db
     .select()
     .from(integrationJobs)
     .where(
       and(
         eq(integrationJobs.provider, provider),
-        lte(integrationJobs.runAfter, new Date()),
+        lte(integrationJobs.runAfter, sql`now()`),
+        inArray(integrationJobs.status, ["queued", "retrying"]),
       ),
     )
+    .orderBy(integrationJobs.runAfter)
     .limit(limit);
 
-  const claimable = due.filter((job) => job.status === "queued" || job.status === "retrying");
   const claimed: ClaimedJob[] = [];
 
   for (const job of claimable) {
@@ -101,6 +117,8 @@ export async function claimDueJobs(
       input: job.input as Record<string, unknown>,
       attempts: updated.attempts,
       maxAttempts: job.maxAttempts,
+      contactId: job.contactId,
+      accessGrantId: job.accessGrantId,
     });
   }
 

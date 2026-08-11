@@ -11,6 +11,7 @@ if (existsSync(envLocalPath)) {
 
 process.env.SIGNED_LINK_SECRET ??= "test-signed-link-secret";
 process.env.CIRCLE_INSIDE_LOOP_SPACE_GROUP_ID ??= "test-space-group-id";
+process.env.CRON_SECRET ??= "test-cron-secret";
 
 // "bypass" (not "error"): the integration test suite intentionally hits a
 // real Neon dev database over HTTP, which MSW would otherwise also try to

@@ -33,34 +33,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  let payload: Record<string, unknown>;
+  let payload: unknown;
   try {
-    payload = (await request.json()) as Record<string, unknown>;
+    payload = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  logger.debug("Circle member-joined webhook payload received", {
-    provider: "circle",
-    action: "webhook.receive",
-    // Logged only at debug level, and only until the real payload shape is
-    // confirmed against a live test — see processMemberJoinedWebhook.ts.
-    payloadKeys: Object.keys(payload).join(","),
-  });
-
   try {
     const result = await processMemberJoinedWebhook(db, payload);
 
-    if (result.outcome === "missing_email") {
-      logger.error("Circle member-joined webhook had no recognizable email field", {
-        provider: "circle",
-        action: "webhook.receive",
-        errorCode: "missing_email",
-      });
-      // 200, not 400/500: Circle has no retry mechanism for this action, so
-      // erroring here just loses the event permanently. Logging it is what
-      // lets a human catch and fix the payload-shape mismatch.
-      return NextResponse.json({ received: true, warning: "missing_email" }, { status: 200 });
+    // 200, not 400/500, for both non-success outcomes below: Circle has no
+    // retry mechanism for this action, so erroring here just loses the
+    // event permanently with nothing gained. Logging (done inside
+    // processMemberJoinedWebhook) is what lets a human catch and fix it.
+    if (result.outcome === "invalid_payload") {
+      return NextResponse.json({ received: true, warning: "invalid_payload" }, { status: 200 });
+    }
+    if (result.outcome === "unknown_member") {
+      return NextResponse.json({ received: true, warning: "unknown_member" }, { status: 200 });
     }
 
     return NextResponse.json({ received: true }, { status: 200 });

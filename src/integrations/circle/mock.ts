@@ -1,4 +1,5 @@
 import "server-only";
+import { randomUUID } from "node:crypto";
 import type {
   CommunityProvider,
   CircleMember,
@@ -18,9 +19,16 @@ export function createMockCommunityProvider(): CommunityProvider {
     },
     async inviteMember(input: InviteMemberInput) {
       const existing = membersByEmail.get(input.email);
-      if (existing) return existing;
-      const member: CircleMember = { id: `mock-member-${membersByEmail.size + 1}`, email: input.email };
+      if (existing) {
+        accessByMember.add(`${existing.id}:${input.spaceGroupId}`);
+        return existing;
+      }
+      // randomUUID rather than a counter — same reasoning as the Kit mock.
+      const member: CircleMember = { id: `mock-member-${randomUUID()}`, email: input.email };
       membersByEmail.set(input.email, member);
+      // Matches the real client: inviting a member passes space_group_ids
+      // in the same call, so the invite itself grants access.
+      accessByMember.add(`${member.id}:${input.spaceGroupId}`);
       return member;
     },
     async grantAccess(input: GrantAccessInput) {
