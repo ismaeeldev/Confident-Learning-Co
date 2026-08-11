@@ -44,6 +44,10 @@ describe("KitApiClient contract", () => {
   });
 
   it("throws before any network call when the tag has no configured ID", async () => {
+    // Explicitly cleared, in case .env.local has a real ID for this tag —
+    // this test only cares that an *unmapped* tag throws, regardless of
+    // what happens to be configured in the local dev environment.
+    vi.stubEnv("KIT_TAG_ARCHETYPE_THINKING_ID", "");
     const { createKitApiClient } = await import("@/integrations/kit/client");
     const client = createKitApiClient({ apiSecret: "test-secret", baseUrl: KIT_TEST_BASE_URL });
 

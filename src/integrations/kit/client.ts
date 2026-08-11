@@ -36,12 +36,13 @@ interface KitClientConfig {
  * Real Kit (formerly ConvertKit) v4 API client, implementing the same
  * EmailProvider interface as src/integrations/kit/mock.ts.
  *
- * ASSUMPTION / DEVIATION (flag for client review): Kit's exact current v4
- * request/response shapes and auth header were not verified against live
- * API docs at build time — this targets `Authorization: Bearer <API secret>`
- * against `https://api.kit.com/v4`, which matches Kit's published v4
- * migration guidance as of this build, but must be smoke-tested against a
- * real Kit sandbox before KIT_SYNC_ENABLED is ever set true in production.
+ * Auth confirmed against a real live GET /v4/tags call (2026-08-11):
+ * Kit v4 uses the `X-Kit-Api-Key` header with the V4 key generated under
+ * Settings > Developer > API Keys > "V4 Keys" — NOT `Authorization: Bearer`,
+ * and NOT the legacy V3 "API Key"/"API Secret" pair (those returned
+ * `401 The access token is invalid` when tried as a Bearer token). The
+ * config field is still named `apiSecret` for interface stability, but its
+ * value must be a V4 API key.
  *
  * Tags are addressed by canonical name (e.g. "archetype-pressure") at the
  * call site and resolved to Kit's numeric tag ID via requireKitTagId —
@@ -64,7 +65,7 @@ export function createKitApiClient(config: KitClientConfig): EmailProvider {
           signal: controller.signal,
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${config.apiSecret}`,
+            "X-Kit-Api-Key": config.apiSecret,
             ...init.headers,
           },
         });
@@ -149,9 +150,12 @@ export function createKitApiClient(config: KitClientConfig): EmailProvider {
 
     async applyTag(input: ApplyTagInput): Promise<void> {
       const tagId = requireKitTagId(input.tag);
+      // Confirmed against a real call (2026-08-11): Kit's v4 API wants the
+      // subscriber id under the key "id", not "subscriber_id" — the latter
+      // returns 422 "Either subscriber id or email address is required".
       await kitFetch<unknown>(
         `/tags/${tagId}/subscribers`,
-        { method: "POST", body: JSON.stringify({ subscriber_id: input.subscriberId }) },
+        { method: "POST", body: JSON.stringify({ id: input.subscriberId }) },
         "applyTag",
       );
     },
@@ -162,8 +166,11 @@ export function createKitApiClient(config: KitClientConfig): EmailProvider {
       // network call is made.
       assertTagRemovable(input.tag);
       const tagId = requireKitTagId(input.tag);
+      // Confirmed against a real call (2026-08-11): the URL is
+      // /tags/:tagId/subscribers/:id — the reverse ordering
+      // (/subscribers/:id/tags/:tagId) returns 404.
       await kitFetch<unknown>(
-        `/subscribers/${input.subscriberId}/tags/${tagId}`,
+        `/tags/${tagId}/subscribers/${input.subscriberId}`,
         { method: "DELETE" },
         "removeTag",
       );

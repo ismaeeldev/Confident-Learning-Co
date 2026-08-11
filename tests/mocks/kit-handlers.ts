@@ -15,11 +15,15 @@ export const kitHandlers = [
     );
   }),
 
+  // Confirmed against a real call (2026-08-11): body key is "id", not
+  // "subscriber_id".
   http.post(`${KIT_TEST_BASE_URL}/tags/:tagId/subscribers`, () => {
     return HttpResponse.json({ subscriber: { id: 42 } }, { status: 200 });
   }),
 
-  http.delete(`${KIT_TEST_BASE_URL}/subscribers/:subscriberId/tags/:tagId`, () => {
+  // Confirmed against a real call: URL is /tags/:tagId/subscribers/:id —
+  // the reverse ordering (/subscribers/:id/tags/:tagId) 404s.
+  http.delete(`${KIT_TEST_BASE_URL}/tags/:tagId/subscribers/:subscriberId`, () => {
     return new HttpResponse(null, { status: 204 });
   }),
 ];
