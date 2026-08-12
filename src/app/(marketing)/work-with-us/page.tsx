@@ -5,6 +5,7 @@ import { Reveal } from "@/components/motion/Reveal";
 import { EditorialImage } from "@/components/content/EditorialImage";
 import { FounderPortrait } from "@/components/content/FounderPortrait";
 import { PendingCheckoutButton } from "@/components/content/PendingCheckoutButton";
+import { ResetEnquiryForm } from "@/components/content/ResetEnquiryForm";
 import { products, formatMinorAsGbp } from "@/config/products";
 
 export const metadata: Metadata = {
@@ -93,6 +94,14 @@ export default function WorkWithUsPage() {
                 size="lg"
               />
             </div>
+          </Reveal>
+        </Container>
+      </Section>
+
+      <Section background="white">
+        <Container width="reading">
+          <Reveal>
+            <ResetEnquiryForm />
           </Reveal>
         </Container>
       </Section>

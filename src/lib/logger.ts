@@ -1,7 +1,25 @@
 import "server-only";
+import { AsyncLocalStorage } from "node:async_hooks";
 import { env } from "@/lib/env";
 
 type LogLevel = "debug" | "info" | "warn" | "error";
+
+/**
+ * Correlation ID context — lets every logger.* call within a request
+ * automatically carry the same requestId without threading it through
+ * every function signature by hand. Wrap a route handler body in
+ * withRequestId() once; explicit `fields.requestId` on any individual
+ * call still takes precedence if a caller needs to override it.
+ */
+const requestContext = new AsyncLocalStorage<{ requestId: string }>();
+
+export function withRequestId<T>(requestId: string, fn: () => T): T {
+  return requestContext.run({ requestId }, fn);
+}
+
+export function getCurrentRequestId(): string | undefined {
+  return requestContext.getStore()?.requestId;
+}
 
 const REDACTED = "[redacted]";
 
@@ -57,10 +75,12 @@ const levelRank: Record<LogLevel, number> = { debug: 0, info: 1, warn: 2, error:
 
 function log(level: LogLevel, message: string, fields: LogFields = {}) {
   if (levelRank[level] < levelRank[env.LOG_LEVEL]) return;
+  const contextRequestId = requestContext.getStore()?.requestId;
   const entry = {
     level,
     message,
     timestamp: new Date().toISOString(),
+    ...(contextRequestId ? { requestId: contextRequestId } : {}),
     ...(redact(fields) as LogFields),
   };
   const serialized = JSON.stringify(entry);

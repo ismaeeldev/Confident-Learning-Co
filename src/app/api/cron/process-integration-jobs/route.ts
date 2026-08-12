@@ -5,6 +5,7 @@ import { logger } from "@/lib/logger";
 import { getCommunityProvider, getEmailProvider } from "@/lib/providers";
 import { claimDueJobs, completeIntegrationJob, failIntegrationJob } from "@/lib/integrationJobs";
 import { processIntegrationJob } from "@/domain/jobs/processIntegrationJob";
+import { sendAdminNotificationEmail } from "@/lib/email";
 
 const JOBS_PER_PROVIDER_PER_RUN = 20;
 
@@ -30,9 +31,13 @@ export async function GET(request: Request) {
   }
 
   const providers = { email: getEmailProvider(), community: getCommunityProvider() };
-  const summary = { kit: { succeeded: 0, failed: 0 }, circle: { succeeded: 0, failed: 0 } };
+  const summary = {
+    kit: { succeeded: 0, failed: 0 },
+    circle: { succeeded: 0, failed: 0 },
+    internal: { succeeded: 0, failed: 0 },
+  };
 
-  for (const providerName of ["kit", "circle"] as const) {
+  for (const providerName of ["kit", "circle", "internal"] as const) {
     const jobs = await claimDueJobs(db, providerName, JOBS_PER_PROVIDER_PER_RUN);
 
     for (const job of jobs) {
@@ -50,15 +55,19 @@ export async function GET(request: Request) {
         });
         const nextStatus = await failIntegrationJob(db, job, { code: "processing_error", message });
         summary[providerName].failed += 1;
-        if (nextStatus === "dead" && env.ADMIN_ALERT_EMAIL) {
-          // Alerting itself (actually sending an email) is out of scope
-          // here — this log line is the hook a real alerting pipeline
-          // (Sentry, a Slack webhook, etc.) would watch for.
+        if (nextStatus === "dead") {
           logger.error("Integration job exhausted all retries and is now dead", {
             provider: providerName,
             action: job.action,
             errorCode: "job_dead",
           });
+          // Best-effort — a dead notification job itself must never crash
+          // the run; if Resend isn't configured this just logs (see
+          // sendAdminNotificationEmail), so failures here are swallowed.
+          await sendAdminNotificationEmail({
+            subject: `Integration job dead: ${providerName}.${job.action}`,
+            text: `Job ${job.id} (${providerName}.${job.action}) exhausted all retries.\n\nLast error: ${message}`,
+          }).catch(() => {});
         }
       }
     }

@@ -47,6 +47,8 @@ export const KIT_TAGS = {
   packHomework: "pack-homework",
   packConversations: "pack-conversations",
   packParentsEvening: "pack-parents-evening",
+  /** Newsletter signup source (Step 11, docs/07-IntegrationContracts.md 7.8) — never the Reflection nurture tags. */
+  newsletterSource: "newsletter-source",
 } as const;
 
 export const KIT_CUSTOM_FIELD_CHILD_BAND = "child_band";

@@ -25,6 +25,8 @@ export const newsletterFormSchema = z.object({
   email: z.string().email(),
   firstName: z.string().min(1).max(100).optional(),
   consentTextVersion: z.string().min(1),
+  // Rejects at the schema layer (400) if a bot fills this hidden field —
+  // established behavior, see tests/unit/funnel-schemas.test.ts.
   honeypot: z.string().max(0).optional(),
 });
 
@@ -36,6 +38,8 @@ export const resetEnquiryFormSchema = z.object({
   childBand: childBandSchema.optional(),
   interest: z.enum(["confidence_reset", "calm_reset"]),
   message: z.string().min(1).max(2000),
+  // Rejects at the schema layer (400) if a bot fills this hidden field —
+  // established behavior, see tests/unit/funnel-schemas.test.ts.
   honeypot: z.string().max(0).optional(),
 });
 

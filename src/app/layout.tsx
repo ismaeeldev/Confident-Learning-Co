@@ -3,6 +3,8 @@ import { Inter, Newsreader } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { JsonLd } from "@/components/content/JsonLd";
+import { ConsentBanner } from "@/components/analytics/ConsentBanner";
+import { AnalyticsLoader } from "@/components/analytics/AnalyticsLoader";
 import { brand } from "@/config/brand";
 import { organizationJsonLd } from "@/lib/structuredData";
 import { env } from "@/lib/env";
@@ -51,6 +53,8 @@ export default function RootLayout({
           </a>
           {children}
           <Toaster />
+          <ConsentBanner />
+          <AnalyticsLoader />
         </TooltipProvider>
       </body>
     </html>

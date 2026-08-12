@@ -75,6 +75,9 @@ export const env = createEnv({
 
     SENTRY_DSN: z.string().optional(),
     SENTRY_AUTH_TOKEN: z.string().optional(),
+
+    /** Sends the Reset enquiry admin notification email. Optional — the notification job logs and safely no-ops when unset, per Step 11's "no invented delivery mechanism" stance. */
+    RESEND_API_KEY: z.string().optional(),
   },
   client: {
     NEXT_PUBLIC_SITE_URL: z.string().url().default("http://localhost:3000"),
@@ -151,6 +154,7 @@ export const env = createEnv({
 
     SENTRY_DSN: process.env.SENTRY_DSN,
     SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
 
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL,
     NEXT_PUBLIC_SCOREAPP_EMBED_URL: process.env.NEXT_PUBLIC_SCOREAPP_EMBED_URL,

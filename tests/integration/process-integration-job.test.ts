@@ -117,6 +117,65 @@ describe("processIntegrationJob against a real Neon connection", () => {
     }
   });
 
+  it("kit.syncNewsletterContact applies the newsletter-source tag and caches the Kit subscriber id", async () => {
+    const contact = await makeContact(`test-${randomUUID()}@example.invalid`);
+    const email = createMockEmailProvider();
+    const community = createMockCommunityProvider();
+
+    await processIntegrationJob(
+      db,
+      { email, community },
+      { id: randomUUID(), action: "kit.syncNewsletterContact", input: {}, contactId: contact.id, accessGrantId: null },
+    );
+
+    const [updated] = await db.select().from(contacts).where(eq(contacts.id, contact.id));
+    expect(updated?.kitSubscriberId).toBeTruthy();
+  });
+
+  it("kit.applyResetInterestTag applies the interest-confidence-reset tag", async () => {
+    const contact = await makeContact(`test-${randomUUID()}@example.invalid`);
+    const email = createMockEmailProvider();
+    const community = createMockCommunityProvider();
+
+    await expect(
+      processIntegrationJob(
+        db,
+        { email, community },
+        {
+          id: randomUUID(),
+          action: "kit.applyResetInterestTag",
+          input: {},
+          contactId: contact.id,
+          accessGrantId: null,
+        },
+      ),
+    ).resolves.toBeUndefined();
+  });
+
+  it("internal.notifyAdminResetEnquiry does not throw when RESEND_API_KEY is unset (safe no-op)", async () => {
+    const email = createMockEmailProvider();
+    const community = createMockCommunityProvider();
+
+    await expect(
+      processIntegrationJob(
+        db,
+        { email, community },
+        {
+          id: randomUUID(),
+          action: "internal.notifyAdminResetEnquiry",
+          input: {
+            email: "parent@example.invalid",
+            firstName: "Adam",
+            interest: "confidence_reset",
+            message: "Test enquiry message",
+          },
+          contactId: null,
+          accessGrantId: null,
+        },
+      ),
+    ).resolves.toBeUndefined();
+  });
+
   it("throws for an unrecognized job action", async () => {
     const contact = await makeContact(`test-${randomUUID()}@example.invalid`);
     const email = createMockEmailProvider();

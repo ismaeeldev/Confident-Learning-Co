@@ -10,7 +10,8 @@ import { assertTagRemovable } from "@/domain/contacts/kitTags";
 import { logger } from "@/lib/logger";
 import { createSignedLink } from "@/lib/signedLinks";
 import { env } from "@/lib/env";
-import { PUBLIC_ROUTES } from "@/config/canon";
+import { PUBLIC_ROUTES, KIT_TAGS } from "@/config/canon";
+import { sendAdminNotificationEmail } from "@/lib/email";
 
 type Database = NeonHttpDatabase<typeof schema>;
 type Contact = typeof contacts.$inferSelect;
@@ -34,6 +35,12 @@ const applyMembershipTagInput = z.object({
   applyTags: z.array(z.string()).default([]),
   removeTags: z.array(z.string()).default([]),
 });
+const notifyAdminResetEnquiryInput = z.object({
+  email: z.string().email(),
+  firstName: z.string(),
+  interest: z.string(),
+  message: z.string(),
+});
 
 /**
  * Dispatches one claimed integration job to the correct handler and makes
@@ -53,8 +60,14 @@ export async function processIntegrationJob(
       return handleFulfilGuidePurchase(db, providers.email, job);
     case "kit.applyMembershipTag":
       return handleApplyMembershipTag(db, providers.email, job);
+    case "kit.syncNewsletterContact":
+      return handleSyncNewsletterContact(db, providers.email, job);
+    case "kit.applyResetInterestTag":
+      return handleApplyResetInterestTag(db, providers.email, job);
     case "circle.provisionGuideAccess":
       return handleProvisionGuideAccess(db, providers.community, job);
+    case "internal.notifyAdminResetEnquiry":
+      return handleNotifyAdminResetEnquiry(job);
     default:
       throw new Error(`Unknown integration job action "${job.action}"`);
   }
@@ -141,6 +154,38 @@ function canRemoveTagSafely(tag: string): boolean {
   } catch {
     return false;
   }
+}
+
+/** Newsletter signup — dedicated source tag only, never the Reflection nurture tags (docs/07-IntegrationContracts.md 7.8). */
+async function handleSyncNewsletterContact(db: Database, email: EmailProvider, job: JobToProcess): Promise<void> {
+  const contact = await getContactOrThrow(db, job.contactId);
+  const subscriberId = await ensureKitSubscriberId(db, email, contact);
+  await email.applyTag({ subscriberId, tag: KIT_TAGS.newsletterSource });
+}
+
+/** Reset enquiry — applies interest-confidence-reset only; no sales sequence (docs/07-IntegrationContracts.md 7.9). */
+async function handleApplyResetInterestTag(db: Database, email: EmailProvider, job: JobToProcess): Promise<void> {
+  const contact = await getContactOrThrow(db, job.contactId);
+  const subscriberId = await ensureKitSubscriberId(db, email, contact);
+  await email.applyTag({ subscriberId, tag: KIT_TAGS.interestConfidenceReset });
+}
+
+/**
+ * Notifies Jane/admin of a Reset enquiry. Safely no-ops (logs only) when
+ * RESEND_API_KEY isn't configured — the enquiry is always stored in
+ * form_submissions regardless, so nothing is lost, just not yet emailed.
+ */
+async function handleNotifyAdminResetEnquiry(job: JobToProcess): Promise<void> {
+  const input = notifyAdminResetEnquiryInput.parse(job.input);
+  await sendAdminNotificationEmail({
+    subject: `New Reset enquiry: ${input.interest.replace("_", " ")}`,
+    text: [
+      `From: ${input.firstName} <${input.email}>`,
+      `Interest: ${input.interest}`,
+      "",
+      input.message,
+    ].join("\n"),
+  });
 }
 
 async function handleProvisionGuideAccess(
