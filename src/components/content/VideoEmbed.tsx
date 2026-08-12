@@ -21,24 +21,32 @@ interface VideoEmbedProps {
  */
 export function VideoEmbed({ title, posterNote, transcript }: VideoEmbedProps) {
   return (
-    <div className="border-border bg-surface flex flex-col gap-5 rounded-2xl border p-3 shadow-sm sm:p-4">
+    <div className="border-border/70 bg-surface group/video flex flex-col gap-5 rounded-[28px] border p-3 shadow-[var(--shadow-elevation-2)] transition-shadow duration-300 sm:p-5">
       <h2 className="font-heading sr-only">{title}</h2>
-      <div className="relative">
-        <EditorialImage shotNote={posterNote} aspect="banner" className="rounded-xl" />
+      <div className="relative isolate overflow-hidden rounded-[20px]">
+        <EditorialImage
+          shotNote={posterNote}
+          aspect="banner"
+          className="rounded-[20px] [&_img]:transition-transform [&_img]:duration-700 [&_img]:ease-out motion-safe:group-hover/video:[&_img]:scale-[1.03]"
+        />
         <div
           aria-hidden="true"
-          className="border-brand-navy-900/10 bg-brand-cream-100/90 pointer-events-none absolute inset-0 m-auto flex size-16 items-center justify-center rounded-full border shadow-md backdrop-blur-sm sm:size-20"
+          className="from-brand-navy-950/35 pointer-events-none absolute inset-0 bg-gradient-to-t via-transparent to-transparent"
+        />
+        <div
+          aria-hidden="true"
+          className="border-brand-cream-100/70 bg-brand-cream-100/95 text-brand-navy-900 pointer-events-none absolute inset-0 m-auto flex size-16 items-center justify-center rounded-full border shadow-[var(--shadow-elevation-2)] backdrop-blur-sm transition-all duration-300 ease-out motion-safe:group-hover/video:scale-110 motion-safe:group-hover/video:shadow-[var(--shadow-gold-glow)] sm:size-20"
         >
-          <Play className="text-brand-navy-900 ml-1 size-6 fill-current sm:size-7" />
+          <Play className="ml-1 size-6 fill-current sm:size-7" aria-hidden="true" />
         </div>
       </div>
-      <p className="text-brand-navy-800 px-1 text-sm font-medium">{title}</p>
+      <p className="text-brand-navy-800 px-2 text-sm font-medium">{title}</p>
       <Accordion type="single" collapsible>
         <AccordionItem value="transcript" className="border-none">
-          <AccordionTrigger className="text-brand-sage-800 px-1">
+          <AccordionTrigger className="text-brand-sage-800 px-2">
             Read the video transcript
           </AccordionTrigger>
-          <AccordionContent className="space-y-4 px-1 text-base leading-relaxed">
+          <AccordionContent className="space-y-4 px-2 text-base leading-relaxed">
             {transcript}
           </AccordionContent>
         </AccordionItem>

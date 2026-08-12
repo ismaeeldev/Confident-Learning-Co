@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { EditorialImage } from "./EditorialImage";
-import { AgeBandBadge } from "./AgeBandBadge";
-import type { ChildBand } from "@/config/canon";
+import { CHILD_BAND_LABELS, type ChildBand } from "@/config/canon";
 
 export interface ArticleCardData {
   slug: string;
@@ -18,25 +17,41 @@ export interface ArticleCardData {
 
 /** Article listing card. */
 export function ArticleCard({ article }: { article: ArticleCardData }) {
+  const config = {
+    "years-2-4": { dot: "bg-brand-gold-500" },
+    "years-5-6": { dot: "bg-brand-sage-600" },
+    "years-7-9": { dot: "bg-brand-navy-700" },
+    "years-10-11": { dot: "bg-brand-gold-700" },
+  }[article.ageBand] || { dot: "bg-brand-gold-500" };
+
   return (
     <Link
       href={`/articles/${article.slug}`}
-      className="group border-border bg-surface focus-visible:ring-focus-ring flex h-full flex-col gap-4 rounded-2xl border p-4 outline-none transition-transform duration-200 ease-out hover:-translate-y-1 focus-visible:ring-3 sm:p-5"
+      className="group border border-brand-cream-300/60 bg-white/80 backdrop-blur-sm focus-visible:ring-focus-ring flex h-full flex-col gap-5 rounded-[24px] p-5 outline-none transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[var(--shadow-elevation-2)] focus-visible:ring-3 shadow-[var(--shadow-elevation-1)]"
     >
-      <div className="overflow-hidden rounded-2xl">
-        <div className="transition-transform duration-300 ease-out group-hover:scale-[1.025]">
-          <EditorialImage shotNote={article.imageShotNote} src={article.image} alt={article.imageShotNote} />
+      <div className="relative overflow-hidden rounded-[18px] aspect-[16/10] bg-brand-cream-100">
+        <div className="w-full h-full transition-transform duration-700 ease-out group-hover:scale-[1.03]">
+          <EditorialImage shotNote={article.imageShotNote} src={article.image} alt={article.imageShotNote} className="w-full h-full object-cover" />
         </div>
+        <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-brand-navy-950/20 via-transparent to-transparent pointer-events-none" />
+        
+        {/* Age band label overlay */}
+        <span className="absolute top-3 left-3 bg-white/95 text-brand-navy-900 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold tracking-wide uppercase shadow-sm backdrop-blur-sm">
+          <span aria-hidden="true" className={`size-1.5 rounded-full ${config.dot}`} />
+          {CHILD_BAND_LABELS[article.ageBand]}
+        </span>
       </div>
-      <div className="flex flex-1 flex-col gap-3">
-        <AgeBandBadge band={article.ageBand} />
-        <h3 className="font-heading text-xl leading-snug group-hover:underline sm:text-2xl">
+      
+      <div className="flex flex-1 flex-col gap-3 px-1">
+        <h3 className="font-heading text-xl sm:text-2.5xl text-brand-navy-950 leading-snug group-hover:text-brand-gold-700 transition-colors duration-200">
           {article.title}
         </h3>
-        <p className="text-muted-foreground line-clamp-3 leading-relaxed">{article.excerpt}</p>
-        <p className="text-muted-foreground mt-auto pt-1 text-sm">
-          {article.author} · {article.authorRole} · {article.readingTimeMinutes} min read
-        </p>
+        <p className="text-brand-navy-800/80 line-clamp-3 leading-relaxed text-sm sm:text-[0.95rem]">{article.excerpt}</p>
+        
+        <div className="mt-auto pt-4 border-t border-brand-cream-300/40 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs sm:text-sm text-muted-foreground">
+          <span className="font-medium text-brand-navy-900/90">{article.author} · <span className="text-xs font-normal text-muted-foreground">{article.authorRole}</span></span>
+          <span className="shrink-0">{article.readingTimeMinutes} min read</span>
+        </div>
       </div>
     </Link>
   );

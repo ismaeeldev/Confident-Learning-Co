@@ -8,7 +8,6 @@ import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
 import { Breadcrumbs } from "@/components/content/Breadcrumbs";
-import { AgeBandBadge } from "@/components/content/AgeBandBadge";
 import { EditorialImage } from "@/components/content/EditorialImage";
 import { FounderPortrait } from "@/components/content/FounderPortrait";
 import { ScopeNotice } from "@/components/content/ScopeNotice";
@@ -19,7 +18,7 @@ import { JsonLd } from "@/components/content/JsonLd";
 import { ReadingProgress } from "@/components/content/ReadingProgress";
 import { ArticleTOCDesktop, ArticleTOCMobile } from "@/components/content/ArticleTOC";
 import { ShareRail } from "@/components/content/ShareRail";
-import { PUBLIC_ROUTES } from "@/config/canon";
+import { PUBLIC_ROUTES, CHILD_BAND_LABELS } from "@/config/canon";
 import { getAllSlugs, getArticleBySlug, getRelatedArticles } from "@/lib/articles";
 import { articleJsonLd, breadcrumbJsonLd } from "@/lib/structuredData";
 import { extractHeadings } from "@/lib/toc";
@@ -73,8 +72,12 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         ])}
       />
 
-      <Section background="cream" className="pt-12 sm:pt-16">
-        <Container width="reading">
+      <Section background="cream" className="relative overflow-hidden pt-12 sm:pt-16 pb-12">
+        {/* Subtle ambient background glow bubbles */}
+        <div aria-hidden="true" className="from-brand-gold-100/50 via-brand-sage-100/25 pointer-events-none absolute -top-24 -right-32 size-[32rem] rounded-full blur-3xl" />
+        <div aria-hidden="true" className="bg-brand-sage-200/20 pointer-events-none absolute -bottom-32 -left-24 size-[26rem] rounded-full blur-3xl" />
+
+        <Container width="reading" className="relative">
           <Reveal>
             <Breadcrumbs
               items={[
@@ -84,33 +87,63 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             />
           </Reveal>
           <Reveal delay={0.05}>
-            <div className="mt-6 flex flex-col gap-4">
-              <AgeBandBadge band={article.ageBand} />
-              <h1 className="font-heading text-[clamp(2rem,3.5vw+1.1rem,3rem)] leading-[1.08] text-balance">
+            <div className="mt-8 flex flex-col gap-5">
+              
+              {/* Premium color-coded age-band badge */}
+              {(() => {
+                const config = {
+                  "years-2-4": { dot: "bg-brand-gold-500" },
+                  "years-5-6": { dot: "bg-brand-sage-600" },
+                  "years-7-9": { dot: "bg-brand-navy-700" },
+                  "years-10-11": { dot: "bg-brand-gold-700" },
+                }[article.ageBand] || { dot: "bg-brand-gold-500" };
+                return (
+                  <span className="bg-white/95 text-brand-navy-900 border border-brand-cream-300 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold tracking-wide uppercase shadow-sm backdrop-blur-sm w-fit select-none">
+                    <span aria-hidden="true" className={`size-1.5 rounded-full ${config.dot}`} />
+                    {CHILD_BAND_LABELS[article.ageBand]}
+                  </span>
+                );
+              })()}
+
+              <h1 className="font-heading text-brand-navy-950 text-[clamp(2.15rem,3.2vw+1.2rem,3.4rem)] leading-[1.08] text-balance">
                 {article.title}
               </h1>
-              <p className="text-brand-navy-800 text-lg leading-relaxed">{article.excerpt}</p>
-              <div className="flex flex-wrap items-center gap-3">
+
+              {/* Decorative divider line */}
+              <div className="flex items-center gap-3 w-40 mt-1">
+                <div className="h-[1.5px] bg-brand-gold-500/40 flex-1" />
+                <svg className="size-2.5 text-brand-gold-600 fill-brand-gold-600 rotate-45" viewBox="0 0 24 24">
+                  <rect x="6" y="6" width="12" height="12" />
+                </svg>
+                <div className="h-[1.5px] bg-brand-gold-500/40 flex-1" />
+              </div>
+
+              <p className="text-brand-navy-800 text-lg leading-relaxed font-medium mt-2">{article.excerpt}</p>
+              
+              {/* Premium author byline badge */}
+              <div className="flex flex-wrap items-center gap-3 bg-white/50 backdrop-blur-sm border border-brand-cream-300/40 px-4 py-2.5 rounded-2xl w-fit shadow-[var(--shadow-elevation-1)] mt-2">
                 <FounderPortrait
                   founder={article.author}
                   shotNote="byline portrait"
                   aspect="square"
                   compact
-                  className="size-12 shrink-0"
+                  className="size-10 shrink-0 rounded-full border border-brand-cream-300/60"
                 />
                 <div className="text-sm">
-                  <p className="font-medium">{article.author}</p>
-                  <p className="text-muted-foreground">{article.authorRole}</p>
+                  <p className="font-bold text-brand-navy-950 leading-tight">{article.author}</p>
+                  <p className="text-muted-foreground text-xs">{article.authorRole}</p>
                 </div>
-                <span className="text-muted-foreground ml-auto text-sm">
+                <div aria-hidden="true" className="w-[1px] h-6 bg-brand-cream-300 mx-2 hidden sm:block" />
+                <span className="text-muted-foreground text-xs sm:text-sm font-medium">
                   {article.readingTimeMinutes} min read
                 </span>
               </div>
+
               <ShareRail
                 url={shareUrl}
                 title={article.title}
                 orientation="horizontal"
-                className="border-border -mx-1 border-t pt-4 lg:hidden"
+                className="border-border -mx-1 border-t pt-4 lg:hidden mt-2"
               />
             </div>
           </Reveal>
@@ -124,13 +157,32 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <Container width="standard">
             <div className="lg:grid lg:grid-cols-[1fr_224px] lg:items-start lg:gap-16">
               <div className="mx-auto w-full max-w-[720px]">
+                {/* Featured image wrapped in a premium double border notched frame */}
                 <Reveal>
-                  <EditorialImage
-                    shotNote={article.featuredImageAlt}
-                    src={article.featuredImage}
-                    alt={article.featuredImageAlt}
-                    className="mb-10"
-                  />
+                  <div className="relative p-6 sm:p-8 bg-white border border-brand-cream-300 rounded-[32px] shadow-[0_20px_50px_-12px_rgba(20,32,56,0.08)] mb-10">
+                    <div className="absolute inset-4 border border-brand-gold-500/30 rounded-[20px] pointer-events-none">
+                      <div className="absolute -top-1.5 -left-1.5 size-3 bg-white border border-brand-gold-500 flex items-center justify-center rotate-45">
+                        <div className="size-1 bg-brand-gold-500 rounded-full" />
+                      </div>
+                      <div className="absolute -top-1.5 -right-1.5 size-3 bg-white border border-brand-gold-500 flex items-center justify-center rotate-45">
+                        <div className="size-1 bg-brand-gold-500 rounded-full" />
+                      </div>
+                      <div className="absolute -bottom-1.5 -left-1.5 size-3 bg-white border border-brand-gold-500 flex items-center justify-center rotate-45">
+                        <div className="size-1 bg-brand-gold-500 rounded-full" />
+                      </div>
+                      <div className="absolute -bottom-1.5 -right-1.5 size-3 bg-white border border-brand-gold-500 flex items-center justify-center rotate-45">
+                        <div className="size-1 bg-brand-gold-500 rounded-full" />
+                      </div>
+                    </div>
+                    <div className="relative border border-dashed border-brand-sage-300/50 bg-brand-sage-100/30 rounded-[18px] p-2 overflow-hidden">
+                      <EditorialImage
+                        shotNote={article.featuredImageAlt}
+                        src={article.featuredImage}
+                        alt={article.featuredImageAlt}
+                        className="rounded-xl transition-transform duration-500 hover:scale-[1.01]"
+                      />
+                    </div>
+                  </div>
                 </Reveal>
 
                 <ArticleTOCMobile headings={headings} />

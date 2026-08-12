@@ -42,11 +42,7 @@ export function ScoreAppEmbed({ embedUrl }: ScoreAppEmbedProps) {
     const container = containerRef.current;
     if (!container || !embedUrl) return;
 
-    if (container.querySelector("iframe")) {
-      setLoaded(true);
-      return;
-    }
-
+    // MutationObserver to watch for iframe injection by ScoreApp
     const observer = new MutationObserver(() => {
       if (container.querySelector("iframe")) {
         setLoaded(true);
@@ -54,6 +50,47 @@ export function ScoreAppEmbed({ embedUrl }: ScoreAppEmbedProps) {
       }
     });
     observer.observe(container, { childList: true, subtree: true });
+
+    // Helper to trigger ScoreApp initialization safely on client mount
+    const initWidget = () => {
+      if (container.querySelector("iframe")) {
+        setLoaded(true);
+        return;
+      }
+      const saWidget = (window as any).ScoreAppWidget;
+      if (saWidget) {
+        try {
+          saWidget.createFromElement(container);
+        } catch (e) {
+          console.error("ScoreAppWidget init failed:", e);
+        }
+      }
+    };
+
+    // If script is already loaded and window.ScoreAppWidget exists
+    if ((window as any).ScoreAppWidget) {
+      initWidget();
+    } else {
+      // Load script dynamically to avoid hydration mismatches
+      const scriptId = "scoreapp-embed-script";
+      let script = document.getElementById(scriptId) as HTMLScriptElement;
+      if (!script) {
+        script = document.createElement("script");
+        script.id = scriptId;
+        script.src = "https://static.scoreapp.com/js/integration/v1/embedding.js";
+        script.async = true;
+        document.head.appendChild(script);
+      }
+      
+      const handleLoad = () => {
+        initWidget();
+      };
+      script.addEventListener("load", handleLoad);
+      return () => {
+        script.removeEventListener("load", handleLoad);
+        observer.disconnect();
+      };
+    }
 
     return () => observer.disconnect();
   }, [embedUrl]);
@@ -85,10 +122,6 @@ export function ScoreAppEmbed({ embedUrl }: ScoreAppEmbedProps) {
           data-sa-view="inline"
           data-sa-auto-height="1"
           style={{ maxWidth: "100%", width: "100%" }}
-        />
-        <Script
-          src="https://static.scoreapp.com/js/integration/v1/embedding.js"
-          strategy="afterInteractive"
         />
       </div>
       <p className="text-muted-foreground text-sm">

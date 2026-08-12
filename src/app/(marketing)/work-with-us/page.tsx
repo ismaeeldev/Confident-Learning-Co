@@ -13,6 +13,18 @@ import { products, formatMinorAsGbp } from "@/config/products";
 export const metadata: Metadata = {
   title: "Work With Us Closely",
   description: "Some families want to walk the method with us directly.",
+  openGraph: {
+    title: "Work With Us Closely — The Confident Learning Co.",
+    description: "Learn about our live group programmes and direct 1-to-1 pathways for families who want to work with Adam and Michela directly.",
+    type: "website",
+    url: "/work-with-us",
+    siteName: "The Confident Learning Co.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Work With Us Closely — The Confident Learning Co.",
+    description: "Learn about our live group programmes and direct 1-to-1 pathways for families who want to work with Adam and Michela directly.",
+  },
 };
 
 const offers = [
