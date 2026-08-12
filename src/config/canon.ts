@@ -68,6 +68,7 @@ export const PUBLIC_ROUTES = {
   checkoutReEntry: "/checkout/re-entry",
   checkoutSuccess: "/checkout/success",
   checkoutCancelled: "/checkout/cancelled",
+  checkoutLinkInvalid: "/checkout/link-invalid",
   accessPending: "/access/pending",
   contactSuccess: "/contact/success",
   privacy: "/privacy",
@@ -89,6 +90,16 @@ export const PRODUCT_KEYS = [
 export type ProductKey = (typeof PRODUCT_KEYS)[number];
 
 export const BUSINESS_TIMEZONE = "Europe/London";
+
+/**
+ * Circle's own native paywall handles the recurring £24.99/month
+ * membership billing (per Circle_and_Website_Build_Pack_v4.docx Part 2 —
+ * "Do not build a custom Stripe-to-Circle bridge"). This is the real path
+ * to that checkout page, confirmed live 2026-08-11. Our signed
+ * continuation/re-entry links redirect here after verifying identity and
+ * Guide ownership — they never process payment themselves.
+ */
+export const CIRCLE_MEMBERSHIP_CHECKOUT_PATH = "/checkout/inside-the-loop";
 
 /** Immutable business rules. See docs/02-CanonicalDecisions.md section 2.3. */
 export const IMMUTABLE_RULES = {

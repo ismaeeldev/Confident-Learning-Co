@@ -8,6 +8,9 @@ import type { EmailProvider } from "@/integrations/kit/types";
 import type { CommunityProvider } from "@/integrations/circle/types";
 import { assertTagRemovable } from "@/domain/contacts/kitTags";
 import { logger } from "@/lib/logger";
+import { createSignedLink } from "@/lib/signedLinks";
+import { env } from "@/lib/env";
+import { PUBLIC_ROUTES } from "@/config/canon";
 
 type Database = NeonHttpDatabase<typeof schema>;
 type Contact = typeof contacts.$inferSelect;
@@ -85,6 +88,28 @@ async function handleFulfilGuidePurchase(db: Database, email: EmailProvider, job
   for (const tag of input.tags) {
     await email.applyTag({ subscriberId, tag });
   }
+
+  // Generate both signed links now, at purchase time, and push them onto
+  // the Kit subscriber as custom fields — Kit's own Day 25/Day 30 timed
+  // emails (Sequence 2) reference these via merge tags
+  // ({{ subscriber.continuation_link }} / {{ subscriber.reentry_link }})
+  // since Kit can't call our signing code at send time itself. 35/45-day
+  // expiries comfortably cover the included 30-day window; a re-entry
+  // request long after that (per the spec, "even a year from now") needs
+  // a freshly generated link, not this one still being valid.
+  const [continuation, reentry] = await Promise.all([
+    createSignedLink(contact.id, "continuation", 60 * 60 * 24 * 35),
+    createSignedLink(contact.id, "reentry", 60 * 60 * 24 * 45),
+  ]);
+
+  await email.upsertSubscriber({
+    email: contact.email,
+    firstName: contact.firstName ?? undefined,
+    fields: {
+      continuation_link: `${env.NEXT_PUBLIC_SITE_URL}${PUBLIC_ROUTES.checkoutMembership}/${continuation.token}`,
+      reentry_link: `${env.NEXT_PUBLIC_SITE_URL}${PUBLIC_ROUTES.checkoutReEntry}/${reentry.token}`,
+    },
+  });
 }
 
 async function handleApplyMembershipTag(db: Database, email: EmailProvider, job: JobToProcess): Promise<void> {
