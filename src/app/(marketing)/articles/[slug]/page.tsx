@@ -92,10 +92,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
               {/* Premium color-coded age-band badge */}
               {(() => {
                 const config = {
-                  "years-2-4": { dot: "bg-brand-gold-500" },
-                  "years-5-6": { dot: "bg-brand-sage-600" },
-                  "years-7-9": { dot: "bg-brand-navy-700" },
-                  "years-10-11": { dot: "bg-brand-gold-700" },
+                  early: { dot: "bg-brand-gold-500" },
+                  middle: { dot: "bg-brand-sage-600" },
+                  "lower-secondary": { dot: "bg-brand-navy-700" },
+                  "exam-years": { dot: "bg-brand-gold-700" },
                 }[article.ageBand] || { dot: "bg-brand-gold-500" };
                 return (
                   <span className="bg-white/95 text-brand-navy-900 border border-brand-cream-300 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold tracking-wide uppercase shadow-sm backdrop-blur-sm w-fit select-none">

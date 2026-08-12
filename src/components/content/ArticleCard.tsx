@@ -18,10 +18,10 @@ export interface ArticleCardData {
 /** Article listing card. */
 export function ArticleCard({ article }: { article: ArticleCardData }) {
   const config = {
-    "years-2-4": { dot: "bg-brand-gold-500" },
-    "years-5-6": { dot: "bg-brand-sage-600" },
-    "years-7-9": { dot: "bg-brand-navy-700" },
-    "years-10-11": { dot: "bg-brand-gold-700" },
+    early: { dot: "bg-brand-gold-500" },
+    middle: { dot: "bg-brand-sage-600" },
+    "lower-secondary": { dot: "bg-brand-navy-700" },
+    "exam-years": { dot: "bg-brand-gold-700" },
   }[article.ageBand] || { dot: "bg-brand-gold-500" };
 
   return (
