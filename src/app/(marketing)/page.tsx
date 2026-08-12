@@ -48,18 +48,21 @@ const ageBandBlocks = [
 export default function HomePage() {
   return (
     <>
-      <Section background="cream" className="pt-12 sm:pt-16 lg:pt-20">
+      <Section background="cream" className="pt-10 sm:pt-14 lg:pt-20">
         <Container>
           <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-            <Reveal>
-              <EditorialImage shotNote="Shot 2: Adam, three-quarter, mid-talk, space to one side for headline text" />
+            <Reveal delay={0.04} className="order-2 lg:order-1">
+              <EditorialImage
+                shotNote="Shot 2: Adam, three-quarter, mid-talk, space to one side for headline text"
+                className="shadow-sm"
+              />
             </Reveal>
-            <Reveal delay={0.08}>
+            <Reveal className="order-1 lg:order-2">
               <div className="flex flex-col gap-6">
-                <h1 className="font-heading text-4xl leading-[1.05] sm:text-5xl lg:text-6xl">
+                <h1 className="font-heading text-[clamp(2.25rem,5vw+1rem,4rem)] leading-[1.05] text-balance">
                   Bright child. Crumbling confidence.
                 </h1>
-                <p className="text-brand-navy-800 text-lg leading-relaxed sm:text-xl">
+                <p className="text-brand-navy-800 max-w-prose text-lg leading-relaxed sm:text-xl">
                   It does not look the same at seven as it does at fifteen, and you are not
                   imagining either one.
                 </p>
@@ -69,7 +72,7 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      <Section background="white">
+      <Section background="white" className="pt-10 sm:pt-12 lg:pt-16">
         <Container width="reading">
           <Reveal>
             <VideoEmbed
@@ -145,14 +148,15 @@ export default function HomePage() {
 
           <div className="grid gap-6 sm:grid-cols-2">
             {ageBandBlocks.map((block, index) => (
-              <Reveal key={block.band} delay={index * 0.06}>
-                <div className="border-border bg-surface flex flex-col gap-4 rounded-2xl border p-6 sm:p-8">
+              <Reveal key={block.band} delay={index * 0.06} className="h-full">
+                <div className="group border-border bg-surface flex h-full flex-col gap-4 rounded-2xl border p-6 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-md sm:p-8">
                   <EditorialImage
                     shotNote={`Environmental image signalling ${block.band}`}
                     src={block.image}
                     alt={block.alt}
+                    className="[&_img]:transition-transform [&_img]:duration-200 [&_img]:ease-out group-hover:[&_img]:scale-[1.02]"
                   />
-                  <div>
+                  <div className="flex flex-1 flex-col">
                     <Eyebrow>
                       {block.band}, {block.ages}
                     </Eyebrow>
@@ -172,13 +176,18 @@ export default function HomePage() {
       </Section>
 
       <Section background="white">
-        <Container width="reading" className="text-center">
+        <Container width="reading">
           <Reveal>
-            <div className="flex flex-col items-center gap-6">
+            <div className="border-border bg-surface-sage flex flex-col items-center gap-6 rounded-2xl border px-6 py-12 text-center sm:px-12 sm:py-16">
               <h2 className="font-heading text-3xl sm:text-4xl">
                 Take the 5-Minute Parent Reflection
               </h2>
-              <PrimaryCTA href={PUBLIC_ROUTES.reflection} size="lg">
+              <PrimaryCTA
+                href={PUBLIC_ROUTES.reflection}
+                size="lg"
+                arrow
+                className="w-full sm:w-auto"
+              >
                 Take the 5-Minute Parent Reflection
               </PrimaryCTA>
               <p className="text-muted-foreground text-sm">
@@ -190,11 +199,11 @@ export default function HomePage() {
       </Section>
 
       <Section background="navy">
-        <Container>
+        <Container width="wide">
           <Reveal>
             <EditorialImage
               shotNote="Shot 7: Adam and Michela together, in conversation, not looking at camera"
-              className="border-brand-sage-600/40 bg-brand-navy-800 text-brand-sage-200"
+              className="border-brand-sage-600/40 bg-brand-navy-800 text-brand-sage-200 shadow-lg"
             />
           </Reveal>
         </Container>

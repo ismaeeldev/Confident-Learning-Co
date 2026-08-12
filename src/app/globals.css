@@ -157,3 +157,15 @@
     @apply font-heading;
   }
 }
+
+@layer utilities {
+  /* Hides scrollbars on horizontally scrollable rows (e.g. mobile filter chips)
+     while keeping the element scrollable by touch, mouse, and keyboard. */
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+}

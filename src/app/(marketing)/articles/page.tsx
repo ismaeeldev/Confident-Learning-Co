@@ -37,22 +37,27 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
 
   return (
     <>
-      <Section background="cream" className="pt-12 sm:pt-16">
+      <Section background="cream" className="pt-12 pb-10 sm:pt-16 sm:pb-14">
         <Container>
           <Reveal>
-            <EditorialImage shotNote="Section header: shot 9 or 10, one of you outdoors, soft light, full width with text over it" />
+            <EditorialImage
+              shotNote="Section header: shot 9 or 10, one of you outdoors, soft light, full width with text over it"
+              className="shadow-sm"
+            />
           </Reveal>
           <Reveal delay={0.08}>
-            <h1 className="font-heading mt-8 text-4xl sm:text-5xl">Learning Confidence, Answered</h1>
+            <h1 className="font-heading mt-8 max-w-3xl text-[clamp(2.25rem,4vw+1rem,3.75rem)] leading-[1.05] text-balance sm:mt-10">
+              Learning Confidence, Answered
+            </h1>
           </Reveal>
         </Container>
       </Section>
 
-      <Section background="white">
+      <div className="border-border/70 sticky top-16 z-30 border-y bg-background/95 backdrop-blur-sm sm:top-20">
         <Container>
           <Reveal>
             <nav
-              className="mb-10 flex flex-wrap gap-2"
+              className="scrollbar-none -mx-5 flex gap-2 overflow-x-auto px-5 py-4 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0"
               aria-label="Filter articles by school year band"
             >
               {filters.map((filter) => {
@@ -62,12 +67,14 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
                     key={filter.value}
                     href={filter.value === "all" ? "/articles" : `/articles?band=${filter.value}`}
                     aria-current={isActive ? "true" : undefined}
+                    className="focus-visible:ring-focus-ring shrink-0 rounded-full outline-none focus-visible:ring-3"
                   >
                     <Badge
                       variant={isActive ? "secondary" : "outline"}
                       className={cn(
-                        "px-4 py-2 text-sm",
-                        !isActive && "text-brand-navy-900 border-brand-sage-600",
+                        "rounded-full px-4 py-2 text-sm transition-colors",
+                        !isActive &&
+                          "text-brand-navy-800 border-brand-sage-300 hover:border-brand-sage-600 hover:bg-surface-sage",
                       )}
                     >
                       {filter.label}
@@ -77,7 +84,11 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
               })}
             </nav>
           </Reveal>
+        </Container>
+      </div>
 
+      <Section background="white" className="pt-10 sm:pt-14">
+        <Container>
           <h2 className="sr-only">
             {activeBand === "all" ? "All articles" : `Articles for ${CHILD_BAND_LABELS[activeBand]}`}
           </h2>
@@ -91,7 +102,7 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
               </div>
             </Reveal>
           ) : (
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-8 sm:grid-cols-2 lg:gap-10">
               {articles.map((article, index) => (
                 <Reveal key={article.slug} delay={index * 0.04}>
                   <ArticleCard

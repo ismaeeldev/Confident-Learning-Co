@@ -16,9 +16,14 @@ import { PrimaryCTA } from "@/components/content/PrimaryCTA";
 import { ArticleCard } from "@/components/content/ArticleCard";
 import { NewsletterFormSlot } from "@/components/content/NewsletterFormSlot";
 import { JsonLd } from "@/components/content/JsonLd";
+import { ReadingProgress } from "@/components/content/ReadingProgress";
+import { ArticleTOCDesktop, ArticleTOCMobile } from "@/components/content/ArticleTOC";
+import { ShareRail } from "@/components/content/ShareRail";
 import { PUBLIC_ROUTES } from "@/config/canon";
 import { getAllSlugs, getArticleBySlug, getRelatedArticles } from "@/lib/articles";
 import { articleJsonLd, breadcrumbJsonLd } from "@/lib/structuredData";
+import { extractHeadings } from "@/lib/toc";
+import { env } from "@/lib/env";
 
 export function generateStaticParams() {
   return getAllSlugs().map((slug) => ({ slug }));
@@ -55,6 +60,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   if (!article) notFound();
 
   const related = getRelatedArticles(article);
+  const headings = extractHeadings(article.body);
+  const shareUrl = new URL(`/articles/${article.slug}`, env.NEXT_PUBLIC_SITE_URL).toString();
 
   return (
     <>
@@ -79,9 +86,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <Reveal delay={0.05}>
             <div className="mt-6 flex flex-col gap-4">
               <AgeBandBadge band={article.ageBand} />
-              <h1 className="font-heading text-3xl sm:text-4xl">{article.title}</h1>
+              <h1 className="font-heading text-[clamp(2rem,3.5vw+1.1rem,3rem)] leading-[1.08] text-balance">
+                {article.title}
+              </h1>
               <p className="text-brand-navy-800 text-lg leading-relaxed">{article.excerpt}</p>
-              <div className="flex items-center gap-3">
+              <div className="flex flex-wrap items-center gap-3">
                 <FounderPortrait
                   founder={article.author}
                   shotNote="byline portrait"
@@ -97,53 +106,77 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                   {article.readingTimeMinutes} min read
                 </span>
               </div>
-            </div>
-          </Reveal>
-        </Container>
-      </Section>
-
-      <Section background="white">
-        <Container width="reading">
-          <Reveal>
-            <EditorialImage
-              shotNote={article.featuredImageAlt}
-              src={article.featuredImage}
-              alt={article.featuredImageAlt}
-              className="mb-10"
-            />
-          </Reveal>
-          <Reveal delay={0.05}>
-            <div className="prose-article flex flex-col gap-5 leading-relaxed [&_h2]:font-heading [&_h2]:mt-8 [&_h2]:text-2xl [&_h3]:font-heading [&_h3]:mt-6 [&_h3]:text-xl [&_a]:text-brand-sage-800 [&_a]:underline [&_a]:underline-offset-4">
-              <MDXRemote
-                source={article.body}
-                options={{
-                  mdxOptions: {
-                    remarkPlugins: [remarkGfm],
-                    rehypePlugins: [
-                      rehypeSlug,
-                      [rehypeAutolinkHeadings, { behavior: "wrap" }],
-                    ],
-                  },
-                }}
+              <ShareRail
+                url={shareUrl}
+                title={article.title}
+                orientation="horizontal"
+                className="border-border -mx-1 border-t pt-4 lg:hidden"
               />
             </div>
           </Reveal>
-
-          <Reveal delay={0.1}>
-            <div className="mt-10">
-              <ScopeNotice />
-            </div>
-          </Reveal>
-
-          <Reveal delay={0.15}>
-            <div className="mt-10 text-center">
-              <PrimaryCTA href={PUBLIC_ROUTES.reflection}>
-                Take the 5-Minute Parent Reflection
-              </PrimaryCTA>
-            </div>
-          </Reveal>
         </Container>
       </Section>
+
+      <div id="article-content">
+        <ReadingProgress targetId="article-content" />
+
+        <Section background="white">
+          <Container width="standard">
+            <div className="lg:grid lg:grid-cols-[1fr_224px] lg:items-start lg:gap-16">
+              <div className="mx-auto w-full max-w-[720px]">
+                <Reveal>
+                  <EditorialImage
+                    shotNote={article.featuredImageAlt}
+                    src={article.featuredImage}
+                    alt={article.featuredImageAlt}
+                    className="mb-10"
+                  />
+                </Reveal>
+
+                <ArticleTOCMobile headings={headings} />
+
+                <Reveal delay={0.05}>
+                  <div className="prose-article mt-8 flex flex-col gap-5 leading-relaxed [&_blockquote]:border-brand-gold-500 [&_blockquote]:text-brand-navy-900 [&_blockquote]:my-2 [&_blockquote]:border-l-4 [&_blockquote]:pl-5 [&_blockquote]:text-xl [&_blockquote]:leading-snug [&_blockquote]:font-medium [&_blockquote]:font-heading [&_blockquote]:not-italic [&_h2]:font-heading [&_h2]:mt-8 [&_h2]:text-2xl [&_h2]:scroll-mt-28 [&_h3]:font-heading [&_h3]:mt-6 [&_h3]:text-xl [&_h3]:scroll-mt-28 [&_a]:text-brand-sage-800 [&_a]:underline [&_a]:underline-offset-4">
+                    <MDXRemote
+                      source={article.body}
+                      options={{
+                        mdxOptions: {
+                          remarkPlugins: [remarkGfm],
+                          rehypePlugins: [
+                            rehypeSlug,
+                            [rehypeAutolinkHeadings, { behavior: "wrap" }],
+                          ],
+                        },
+                      }}
+                    />
+                  </div>
+                </Reveal>
+
+                <Reveal delay={0.1}>
+                  <div className="mt-10">
+                    <ScopeNotice />
+                  </div>
+                </Reveal>
+
+                <Reveal delay={0.15}>
+                  <div className="mt-10 text-center">
+                    <PrimaryCTA href={PUBLIC_ROUTES.reflection}>
+                      Take the 5-Minute Parent Reflection
+                    </PrimaryCTA>
+                  </div>
+                </Reveal>
+              </div>
+
+              <aside className="hidden lg:sticky lg:top-28 lg:flex lg:flex-col lg:gap-8">
+                <ArticleTOCDesktop headings={headings} />
+                <div className="border-border flex flex-col items-center gap-4 border-t pt-6">
+                  <ShareRail url={shareUrl} title={article.title} orientation="vertical" />
+                </div>
+              </aside>
+            </div>
+          </Container>
+        </Section>
+      </div>
 
       <Section background="cream">
         <Container width="reading">

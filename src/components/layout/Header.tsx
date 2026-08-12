@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/layout/Container";
@@ -12,6 +13,7 @@ import { cn } from "@/lib/utils";
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     function onScroll() {
@@ -30,7 +32,7 @@ export function Header() {
       )}
     >
       <Container>
-        <div className="flex h-20 items-center justify-between gap-6">
+        <div className="flex h-16 items-center justify-between gap-6 sm:h-20">
           <Link href="/" className="shrink-0" aria-label={brand.name}>
             <Image
               src="/logo.png"
@@ -38,20 +40,30 @@ export function Header() {
               width={490}
               height={93}
               priority
-              className="h-8 w-auto sm:h-10"
+              className="h-7 w-auto sm:h-9 lg:h-10"
             />
           </Link>
 
-          <nav className="hidden items-center gap-6 xl:flex" aria-label="Primary">
-            {primaryNavigation.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-brand-navy-900 hover:text-brand-sage-800 text-sm font-medium whitespace-nowrap underline-offset-4 transition-colors hover:underline"
-              >
-                {link.label}
-              </Link>
-            ))}
+          <nav className="hidden items-center gap-8 xl:flex" aria-label="Primary">
+            {primaryNavigation.map((link) => {
+              const active = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "relative py-1 text-sm font-medium whitespace-nowrap transition-colors",
+                    "after:bg-brand-sage-700 after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-full after:origin-left after:scale-x-0 after:transition-transform after:duration-200 hover:after:scale-x-100",
+                    active
+                      ? "text-brand-navy-900 after:scale-x-100"
+                      : "text-brand-navy-800 hover:text-brand-sage-800",
+                  )}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
 
           <Button asChild className="hidden xl:inline-flex">

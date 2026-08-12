@@ -23,23 +23,23 @@ export function MobileNav() {
           <Menu aria-hidden="true" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="bg-background flex flex-col gap-8">
-        <SheetHeader>
-          <SheetTitle className="font-heading">{brand.name}</SheetTitle>
+      <SheetContent side="right" className="bg-background flex flex-col gap-6 sm:max-w-xs">
+        <SheetHeader className="border-border border-b pb-4">
+          <SheetTitle className="font-heading pr-10 text-lg">{brand.name}</SheetTitle>
         </SheetHeader>
         <nav className="flex flex-col gap-1 px-4" aria-label="Primary">
           {primaryNavigation.map((link) => (
             <SheetClose asChild key={link.href}>
               <Link
                 href={link.href}
-                className="text-brand-navy-900 hover:bg-surface-sage flex min-h-11 items-center rounded-xl px-3 text-base font-medium"
+                className="text-brand-navy-900 hover:bg-surface-sage flex min-h-12 items-center rounded-xl px-3 text-base font-medium transition-colors"
               >
                 {link.label}
               </Link>
             </SheetClose>
           ))}
         </nav>
-        <div className="mt-auto px-4 pb-4">
+        <div className="border-border mt-auto border-t px-4 pt-4 pb-6">
           <SheetClose asChild>
             <Button asChild className="w-full">
               <Link href={headerCta.href}>{headerCta.label}</Link>

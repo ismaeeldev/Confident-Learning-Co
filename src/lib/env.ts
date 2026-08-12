@@ -168,6 +168,7 @@ export const env = createEnv({
 });
 
 if (
+  typeof window === "undefined" &&
   env.STRIPE_LIVE_MODE_ALLOWED &&
   env.STRIPE_SECRET_KEY &&
   !env.STRIPE_SECRET_KEY.startsWith("sk_live_") &&
