@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { JsonLd } from "@/components/content/JsonLd";
 import { ConsentBanner } from "@/components/analytics/ConsentBanner";
 import { AnalyticsLoader } from "@/components/analytics/AnalyticsLoader";
+import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
 import { brand } from "@/config/brand";
 import { organizationJsonLd } from "@/lib/structuredData";
 import { env } from "@/lib/env";
@@ -55,6 +56,7 @@ export default function RootLayout({
           <Toaster />
           <ConsentBanner />
           <AnalyticsLoader />
+          <ServiceWorkerRegistration />
         </TooltipProvider>
       </body>
     </html>
