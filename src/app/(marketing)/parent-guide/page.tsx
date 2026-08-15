@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   description:
     "The complete method for rebuilding your child's confidence in learning, delivered entirely through you. Written for the whole of the 6 to 16 age group.",
   openGraph: {
-    title: "The Learning Confidence Parent Guide — Rebuild Your Child's Confidence",
+    title: "The Learning Confidence Parent Guide: Rebuild Your Child's Confidence",
     description:
       "The complete method for rebuilding your child's confidence in learning, delivered entirely through you. Written for the whole of the 6 to 16 age group.",
     type: "website",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "The Learning Confidence Parent Guide — Rebuild Your Child's Confidence",
+    title: "The Learning Confidence Parent Guide: Rebuild Your Child's Confidence",
     description:
       "The complete method for rebuilding your child's confidence in learning, delivered entirely through you. Written for the whole of the 6 to 16 age group.",
   },

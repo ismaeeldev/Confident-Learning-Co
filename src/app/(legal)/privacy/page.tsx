@@ -55,12 +55,12 @@ export default function PrivacyPolicyPage() {
       <h2>Who we share information with</h2>
       <p>We use the following third-party services to operate the platform. Each processes only the data necessary for its function:</p>
       <ul>
-        <li><strong>Stripe</strong> — payment processing. We never see or store your full card details.</li>
-        <li><strong>Kit</strong> — email delivery, subscriber tags, and nurture sequences.</li>
-        <li><strong>Circle</strong> — hosting the private Inside the Loop community.</li>
-        <li><strong>ScoreApp</strong> — hosting and scoring the Reflection quiz.</li>
-        <li><strong>Neon</strong> — secure database hosting for operational records.</li>
-        <li><strong>Vercel</strong> — website hosting and delivery.</li>
+        <li><strong>Stripe</strong>: payment processing. We never see or store your full card details.</li>
+        <li><strong>Kit</strong>: email delivery, subscriber tags, and nurture sequences.</li>
+        <li><strong>Circle</strong>: hosting the private Inside the Loop community.</li>
+        <li><strong>ScoreApp</strong>: hosting and scoring the Reflection quiz.</li>
+        <li><strong>Neon</strong>: secure database hosting for operational records.</li>
+        <li><strong>Vercel</strong>: website hosting and delivery.</li>
       </ul>
       <p>We do not sell your personal information to any third party.</p>
 

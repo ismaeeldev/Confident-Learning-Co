@@ -169,7 +169,7 @@ export default function ReflectionPage() {
               {/* Dotted border wrapper for the placeholder image */}
               <div className="relative border border-dashed border-brand-sage-300/50 bg-brand-sage-100/30 rounded-[14px] p-1.5 overflow-hidden">
                 <EditorialImage
-                  shotNote="Shot 11: hands and notebook, no face — calm and quiet banner"
+                  shotNote="Shot 11: hands and notebook, no face, calm and quiet banner"
                   aspect="square"
                   className="rounded-lg transition-transform duration-500 group-hover:scale-[1.02]"
                 />

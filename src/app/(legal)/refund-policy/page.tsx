@@ -42,7 +42,7 @@ export default function RefundPolicyPage() {
       <h2>Payment disputes</h2>
       <p>
         If you believe you have been charged in error, please contact us before raising a dispute
-        with your bank or card provider — we can usually resolve this faster directly. All
+        with your bank or card provider; we can usually resolve this faster directly. All
         disputes and chargebacks are reviewed manually.
       </p>
 

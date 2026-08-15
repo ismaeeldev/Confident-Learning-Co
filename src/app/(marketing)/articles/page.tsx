@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title: "Learning Confidence, Answered",
   description: "Articles organised by school year band, from ages 6 to 16.",
   openGraph: {
-    title: "Learning Confidence, Answered — The Confident Learning Co.",
+    title: "Learning Confidence, Answered: The Confident Learning Co.",
     description: "Expert articles and actionable guides on rebuilding children's learning confidence, organised by age group bands from 6 to 16.",
     type: "website",
     url: "/articles",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Learning Confidence, Answered — The Confident Learning Co.",
+    title: "Learning Confidence, Answered: The Confident Learning Co.",
     description: "Expert articles and actionable guides on rebuilding children's learning confidence, organised by age group bands from 6 to 16.",
   },
 };

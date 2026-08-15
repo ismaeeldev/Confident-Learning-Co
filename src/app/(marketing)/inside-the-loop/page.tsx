@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   title: "Inside the Loop",
   description: "The members community of The Confident Learning Co.",
   openGraph: {
-    title: "Inside the Loop Community — The Confident Learning Co.",
+    title: "Inside the Loop Community: The Confident Learning Co.",
     description: "The members-only community where parent learning confidence specialist coaching keeps working every day.",
     type: "website",
     url: "/inside-the-loop",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Inside the Loop Community — The Confident Learning Co.",
+    title: "Inside the Loop Community: The Confident Learning Co.",
     description: "The members-only community where parent learning confidence specialist coaching keeps working every day.",
   },
 };

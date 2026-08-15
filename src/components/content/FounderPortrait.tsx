@@ -46,7 +46,7 @@ export function FounderPortrait({
 
   return (
     <ImagePlaceholder
-      label={`${founder} portrait — ${shotNote}`}
+      label={`${founder} portrait: ${shotNote}`}
       aspect={aspect}
       compact={compact}
       className={cn(className)}

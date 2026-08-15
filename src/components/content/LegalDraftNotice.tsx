@@ -10,7 +10,7 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 export function LegalDraftNotice() {
   return (
     <Alert className="border-brand-gold-500 bg-surface-gold mb-10">
-      <AlertTitle className="text-brand-navy-900">Draft — pending legal review</AlertTitle>
+      <AlertTitle className="text-brand-navy-900">Draft: pending legal review</AlertTitle>
       <AlertDescription className="text-brand-navy-800">
         This page reflects the platform&rsquo;s actual data flows and business rules as built, but
         has not been reviewed or approved by a qualified legal adviser. Do not treat this as

@@ -48,7 +48,7 @@ export function ResetEnquiryForm() {
   if (status === "success") {
     return (
       <div className="border-border bg-surface-sage mx-auto max-w-xl rounded-2xl border p-6 text-center sm:p-8">
-        <h3 className="font-heading text-xl">Thank you — we&rsquo;ve got your note</h3>
+        <h3 className="font-heading text-xl">Thank you, we&rsquo;ve got your note</h3>
         <p className="text-brand-sage-800 mt-1 text-sm">
           Jane or Adam will read this and get back to you personally.
         </p>

@@ -10,7 +10,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     PUBLIC_ROUTES.reflection,
     PUBLIC_ROUTES.parentGuide,
     PUBLIC_ROUTES.insideTheLoop,
-    PUBLIC_ROUTES.workWithUs,
+    // Work With Us Closely is members-only (not public-facing) — see note in
+    // src/app/(marketing)/work-with-us/page.tsx — deliberately excluded here.
     PUBLIC_ROUTES.about,
     PUBLIC_ROUTES.articles,
     PUBLIC_ROUTES.privacy,

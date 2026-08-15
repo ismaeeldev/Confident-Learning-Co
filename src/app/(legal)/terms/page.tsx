@@ -42,14 +42,16 @@ export default function TermsPage() {
         purchases; your existing purchase or membership price is not affected retroactively.
       </p>
 
-      <h2>5. The Parent Guide and included trial</h2>
+      <h2>5. The Parent Guide and included access</h2>
       <p>
-        Purchasing the Parent Guide includes a {membershipConfig.includedDays}-day trial of Inside
-        the Loop membership. A payment card is required to start the trial. Unless you cancel
-        before the {membershipConfig.includedDays} days end, your membership will automatically
-        continue at {membershipConfig.priceMinor / 100}{" "}
-        {membershipConfig.currency.toUpperCase()} per {membershipConfig.billingInterval}, billed
-        to the same card. We will remind you before the trial ends so this is never a surprise.
+        Purchasing the Parent Guide includes {membershipConfig.includedDays} days of full access
+        to Inside the Loop membership, at no extra cost and with no payment card required to start
+        it. Nothing converts automatically and nobody is charged without choosing to be. If you
+        want to continue as a member once your included days end, you choose to do so yourself, at
+        the price shown on the Inside the Loop page ({membershipConfig.priceMinor / 100}{" "}
+        {membershipConfig.currency.toUpperCase()} per {membershipConfig.billingInterval} at the
+        time of writing). If you do not choose to continue, your included access simply ends and
+        you are never charged. Either way, the Parent Guide itself remains yours to keep.
       </p>
 
       <h2>6. Cancellation</h2>

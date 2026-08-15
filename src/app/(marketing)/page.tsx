@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   description:
     "Bright child. Crumbling confidence. It does not look the same at seven as it does at fifteen, and you are not imagining either one.",
   openGraph: {
-    title: "Rebuild Your Child's Learning Confidence — The Confident Learning Co.",
+    title: "Rebuild Your Child's Learning Confidence: The Confident Learning Co.",
     description:
       "Bright child. Crumbling confidence. It does not look the same at seven as it does at fifteen, and you are not imagining either one.",
     type: "website",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Rebuild Your Child's Learning Confidence — The Confident Learning Co.",
+    title: "Rebuild Your Child's Learning Confidence: The Confident Learning Co.",
     description:
       "Bright child. Crumbling confidence. It does not look the same at seven as it does at fifteen, and you are not imagining either one.",
   },
@@ -162,7 +162,7 @@ export default function HomePage() {
           <Reveal>
             <VideoEmbed
               title="Hear it from Adam"
-              posterNote="90-second home page video — Adam. Poster: still from Shot 1. No autoplay, no music."
+              posterNote="90-second home page video: Adam. Poster: still from Shot 1. No autoplay, no music."
               transcript={
                 <>
                   <p>

@@ -14,9 +14,9 @@ import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Adam, Michela, and Jane — The Confident Learning Co.",
+  description: "Adam, Michela, and Jane: The Confident Learning Co.",
   openGraph: {
-    title: "About Us — The Confident Learning Co.",
+    title: "About Us: The Confident Learning Co.",
     description: "Meet Adam, Michela, and Jane. Learn about our specialists' backgrounds, experience, advocacy, and approach to rebuilding children's learning confidence.",
     type: "website",
     url: "/about",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "About Us — The Confident Learning Co.",
+    title: "About Us: The Confident Learning Co.",
     description: "Meet Adam, Michela, and Jane. Learn about our specialists' backgrounds, experience, advocacy, and approach to rebuilding children's learning confidence.",
   },
 };
@@ -55,7 +55,7 @@ const founders = [
     role: "Pathway Coordinator, The Confident Learning Co.",
     shotNote: "get a real portrait before launch",
     bio: [
-      "Jane is the first person you speak to when you are considering working with us closely. Her job is not to sell you anything. It is to listen to your situation properly and tell you honestly whether what we do is the right fit, and if it is not, to point you toward what is.",
+      "Jane is the first person you speak to when you are considering working with us closely. Her job is not to sell you anything. Jane listens properly and takes it back to Adam and Michela. If anything in your situation needs different support first, she will tell you plainly and point you toward it.",
     ],
   },
 ] as const;

@@ -7,14 +7,22 @@ import { EditorialImage } from "@/components/content/EditorialImage";
 import { FounderPortrait } from "@/components/content/FounderPortrait";
 import { PendingCheckoutButton } from "@/components/content/PendingCheckoutButton";
 import { Eyebrow } from "@/components/content/Eyebrow";
-import { ResetEnquiryForm } from "@/components/content/ResetEnquiryForm";
 import { products, formatMinorAsGbp } from "@/config/products";
 
+/**
+ * Members-only page: not linked from primary/footer nav (see
+ * src/config/navigation.ts, src/components/layout/Footer.tsx) and excluded
+ * from the sitemap (src/app/sitemap.ts). `robots: { index: false }` below
+ * keeps it out of search results too. This is deliberately an "unlisted, not
+ * publicly discoverable" treatment, not a login/session gate — real access
+ * control is covered separately by the client's Pathway Access Gate spec.
+ */
 export const metadata: Metadata = {
   title: "Work With Us Closely",
   description: "Some families want to walk the method with us directly.",
+  robots: { index: false, follow: false },
   openGraph: {
-    title: "Work With Us Closely — The Confident Learning Co.",
+    title: "Work With Us Closely: The Confident Learning Co.",
     description: "Learn about our live group programmes and direct 1-to-1 pathways for families who want to work with Adam and Michela directly.",
     type: "website",
     url: "/work-with-us",
@@ -22,7 +30,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Work With Us Closely — The Confident Learning Co.",
+    title: "Work With Us Closely: The Confident Learning Co.",
     description: "Learn about our live group programmes and direct 1-to-1 pathways for families who want to work with Adam and Michela directly.",
   },
 };
@@ -41,7 +49,7 @@ const offers = [
     inclusions: [
       "Led live by Adam and Michela, together",
       "A small cohort, over a set number of weeks",
-      "Covers the full 6 to 16 range — both ends served properly",
+      "Covers the full 6 to 16 range, both ends served properly",
     ],
   },
   {
@@ -56,8 +64,8 @@ const offers = [
       "Private, focused work with one family at a time. The Confidence Reset rebuilds a child’s confidence in learning through you. The Calm Reset is its settle-side partner, for the child who cannot yet get steady enough for the confidence work to land.",
     inclusions: [
       "Private, focused work with one family at a time",
-      "The Confidence Reset — rebuilds a child’s confidence in learning",
-      "The Calm Reset — for the child who isn’t yet steady enough",
+      "The Confidence Reset: rebuilds a child’s confidence in learning",
+      "The Calm Reset: for the child who isn’t yet steady enough",
     ],
   },
 ];
@@ -71,12 +79,12 @@ const pathwaySteps = [
   {
     icon: HeartHandshake,
     label: "Fit Assessment",
-    body: "Jane listens properly, then tells you honestly whether it’s the right fit.",
+    body: "Jane listens properly and takes it back to Adam and Michela. If anything in your situation needs different support first, she will tell you plainly and point you toward it.",
   },
   {
     icon: Compass,
     label: "Next Step",
-    body: "The right path forward with us — or a plain, honest steer toward who is.",
+    body: "The right path forward with us, or a plain, honest steer toward who is.",
   },
 ] as const;
 
@@ -175,7 +183,7 @@ export default function WorkWithUsPage() {
           <Reveal>
             <div className="flex flex-col items-center gap-4">
               <EditorialImage
-                shotNote="Two mugs on a table — represents a conversation without staging one"
+                shotNote="Two mugs on a table, representing a conversation without staging one"
                 src="/images/two-mugs-table.jpg"
                 alt="Two mugs sitting together on a wooden table with steam gently rising"
                 aspect="square"
@@ -242,14 +250,6 @@ export default function WorkWithUsPage() {
                 size="lg"
               />
             </div>
-          </Reveal>
-        </Container>
-      </Section>
-
-      <Section background="cream">
-        <Container width="reading">
-          <Reveal>
-            <ResetEnquiryForm />
           </Reveal>
         </Container>
       </Section>

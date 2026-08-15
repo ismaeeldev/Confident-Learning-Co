@@ -18,20 +18,20 @@ export default function CookiesPage() {
       </p>
 
       <h2>Cookies we use</h2>
-      <p><strong>Essential cookies</strong> — always active, required for the site to function:</p>
+      <p><strong>Essential cookies</strong>: always active, required for the site to function:</p>
       <ul>
         <li>Session and security cookies that keep the site working correctly</li>
         <li>Cookies required by Stripe to process payments securely</li>
       </ul>
       <p>
-        <strong>Analytics cookies</strong> — only active where analytics are enabled and, where
+        <strong>Analytics cookies</strong>: only active where analytics are enabled and, where
         required, only after you consent:
       </p>
       <ul>
         <li>Google Analytics, to understand how visitors use the site</li>
         <li>Microsoft Clarity, to understand on-page behaviour</li>
       </ul>
-      <p><strong>Marketing cookies</strong> — only active where enabled and consented to:</p>
+      <p><strong>Marketing cookies</strong>: only active where enabled and consented to:</p>
       <ul>
         <li>Meta Pixel, to measure the effectiveness of any social advertising</li>
       </ul>

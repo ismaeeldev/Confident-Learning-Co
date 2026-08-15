@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Container } from "@/components/layout/Container";
-import { primaryNavigation, secondaryNavigation, legalNavigation } from "@/config/navigation";
+import { primaryNavigation, legalNavigation } from "@/config/navigation";
 import { brand } from "@/config/brand";
 
 export function Footer() {
@@ -26,7 +26,7 @@ export function Footer() {
               </div>
             </div>
             <nav className="flex flex-wrap gap-x-6 gap-y-2 text-sm" aria-label="Footer">
-              {[...primaryNavigation, ...secondaryNavigation].map((link) => (
+              {primaryNavigation.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}

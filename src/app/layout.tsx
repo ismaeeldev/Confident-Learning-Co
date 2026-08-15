@@ -25,8 +25,8 @@ const headingFont = Newsreader({
 export const metadata: Metadata = {
   metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL),
   title: {
-    default: `${brand.name} — ${brand.tagline}`,
-    template: `%s — ${brand.name}`,
+    default: `${brand.name}: ${brand.tagline}`,
+    template: `%s: ${brand.name}`,
   },
   description:
     "Parent education and coaching for rebuilding a child's confidence in learning, ages 6 to 16.",
