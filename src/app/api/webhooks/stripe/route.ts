@@ -10,6 +10,7 @@ import {
   processGuideCheckoutCompleted,
 } from "@/domain/purchases/processGuideCheckout";
 import { processMembershipCheckoutCompleted } from "@/domain/purchases/processMembershipCheckout";
+import { processPathwayCheckoutCompleted } from "@/domain/purchases/processPathwayCheckout";
 import { processRefund } from "@/domain/purchases/processRefund";
 import {
   handleSubscriptionUpdated,
@@ -74,6 +75,18 @@ export async function POST(request: Request) {
             currency: session.currency ?? "gbp",
             customerEmail: session.customer_details?.email ?? session.customer_email ?? null,
             productKeyFromMetadata: productKey,
+          });
+        } else if (productKey === "pathway") {
+          await processPathwayCheckoutCompleted(db, {
+            stripeCheckoutSessionId: session.id,
+            stripePaymentIntentId: normalizeId(session.payment_intent),
+            stripeCustomerId: normalizeId(session.customer),
+            stripeProductId: lineItem.productId,
+            stripePriceId: lineItem.priceId,
+            amountTotal: session.amount_total ?? 0,
+            currency: session.currency ?? "gbp",
+            paymentStatus: session.payment_status,
+            contactId: session.metadata?.contactId,
           });
         } else {
           await processGuideCheckoutCompleted(db, {

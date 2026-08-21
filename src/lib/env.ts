@@ -44,6 +44,8 @@ export const env = createEnv({
     STRIPE_PACK_CONVERSATIONS_PRICE_ID: z.string().optional(),
     STRIPE_PACK_PARENTS_EVENING_PRICE_ID: z.string().optional(),
     STRIPE_PATHWAY_PRICE_ID: z.string().optional(),
+    /** Full price (£75), takes over from STRIPE_PATHWAY_PRICE_ID (£50) at FOUNDERS_CLOSE_DATE — same cutoff as the Guide's founders window (Annexe C: "it changes at the end of September"). Not required for the 24 Aug launch — Pathway is Sept work — but must be set before that date. */
+    STRIPE_PATHWAY_FULL_PRICE_ID: z.string().optional(),
     STRIPE_GROUP_PRICE_ID: z.string().optional(),
     STRIPE_CONFIDENCE_RESET_PRICE_ID: z.string().optional(),
     STRIPE_CALM_RESET_PRICE_ID: z.string().optional(),
@@ -129,6 +131,7 @@ export const env = createEnv({
     STRIPE_PACK_CONVERSATIONS_PRICE_ID: process.env.STRIPE_PACK_CONVERSATIONS_PRICE_ID,
     STRIPE_PACK_PARENTS_EVENING_PRICE_ID: process.env.STRIPE_PACK_PARENTS_EVENING_PRICE_ID,
     STRIPE_PATHWAY_PRICE_ID: process.env.STRIPE_PATHWAY_PRICE_ID,
+    STRIPE_PATHWAY_FULL_PRICE_ID: process.env.STRIPE_PATHWAY_FULL_PRICE_ID,
     STRIPE_GROUP_PRICE_ID: process.env.STRIPE_GROUP_PRICE_ID,
     STRIPE_CONFIDENCE_RESET_PRICE_ID: process.env.STRIPE_CONFIDENCE_RESET_PRICE_ID,
     STRIPE_CALM_RESET_PRICE_ID: process.env.STRIPE_CALM_RESET_PRICE_ID,
