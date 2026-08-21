@@ -3,9 +3,11 @@ import { randomUUID } from "node:crypto";
 import { SignJWT, jwtVerify, errors as joseErrors } from "jose";
 import { env } from "@/lib/env";
 
-export type SignedLinkKind = "continuation" | "reentry";
+export type SignedLinkKind = "continuation" | "reentry" | "login";
 
 const DEFAULT_EXPIRY_SECONDS = 60 * 60 * 24 * 14; // 14 days
+/** Login links are deliberately much shorter-lived than continuation/re-entry links — Annexe B section 5.1/5.2 specifies 15 minutes. */
+export const LOGIN_LINK_EXPIRY_SECONDS = 60 * 15;
 
 function getSecretKey(): Uint8Array {
   if (!env.SIGNED_LINK_SECRET) {
@@ -86,7 +88,7 @@ export async function verifySignedLinkToken(
     typeof payload.contactId !== "string" ||
     typeof payload.jti !== "string" ||
     typeof payload.exp !== "number" ||
-    (payload.kind !== "continuation" && payload.kind !== "reentry")
+    (payload.kind !== "continuation" && payload.kind !== "reentry" && payload.kind !== "login")
   ) {
     throw new SignedLinkError("This link is invalid.", "invalid");
   }

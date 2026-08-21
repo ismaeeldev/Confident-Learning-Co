@@ -17,15 +17,16 @@ export function createStripeProvider(secretKey: string, webhookSecret?: string):
   return {
     async createCheckoutSession(input: CreateCheckoutSessionInput): Promise<CheckoutSession> {
       const product = products[input.productKey];
-      if (!product.stripePriceId) {
+      const priceId = input.priceIdOverride ?? product.stripePriceId;
+      if (!priceId) {
         throw new Error(
           `No Stripe price ID configured for product "${input.productKey}". Set the matching STRIPE_*_PRICE_ID env var.`,
         );
       }
 
       const session = await stripe.checkout.sessions.create({
-        mode: "payment",
-        line_items: [{ price: product.stripePriceId, quantity: 1 }],
+        mode: input.mode ?? "payment",
+        line_items: [{ price: priceId, quantity: 1 }],
         customer_email: input.customerEmail,
         success_url: input.successUrl,
         cancel_url: input.cancelUrl,

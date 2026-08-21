@@ -2,7 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Container } from "@/components/layout/Container";
 import { primaryNavigation, legalNavigation } from "@/config/navigation";
-import { brand } from "@/config/brand";
+import { brand, traderIdentity } from "@/config/brand";
+import { CookieSettingsLink } from "@/components/layout/CookieSettingsLink";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -42,6 +43,14 @@ export function Footer() {
             This work supports parents. It does not replace clinical care.
           </p>
 
+          <p className="text-brand-sage-300/80 max-w-2xl text-xs leading-relaxed">
+            {traderIdentity.legalName}
+            <br />
+            {traderIdentity.address}
+            <br />
+            {traderIdentity.icoRegistration}
+          </p>
+
           <div className="border-brand-navy-700 flex flex-col gap-4 border-t pt-8 text-sm sm:flex-row sm:items-center sm:justify-between">
             <nav className="flex flex-wrap gap-x-6 gap-y-2" aria-label="Legal">
               {legalNavigation.map((link) => (
@@ -53,6 +62,7 @@ export function Footer() {
                   {link.label}
                 </Link>
               ))}
+              <CookieSettingsLink />
             </nav>
             <p className="text-brand-sage-300">
               © {year} {brand.name}. All rights reserved.

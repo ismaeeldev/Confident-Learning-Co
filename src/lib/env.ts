@@ -14,6 +14,8 @@ export const env = createEnv({
     SUPPORT_EMAIL: z.string().email().optional(),
     ADMIN_ALERT_EMAIL: z.string().email().optional(),
     SIGNED_LINK_SECRET: z.string().min(1).optional(),
+    /** Signs the member session cookie (Phase 3). Deliberately separate from SIGNED_LINK_SECRET — sessions are long-lived, single-use links are short-lived, and a leak of one must not automatically compromise the other. */
+    SESSION_SECRET: z.string().min(1).optional(),
     CRON_SECRET: z.string().min(1).optional(),
 
     EXTERNAL_SIDE_EFFECTS_ENABLED: booleanFlag,
@@ -32,6 +34,9 @@ export const env = createEnv({
     STRIPE_WEBHOOK_SECRET: z.string().min(1).optional(),
     STRIPE_GUIDE_PRODUCT_ID: z.string().optional(),
     STRIPE_GUIDE_PRICE_ID: z.string().optional(),
+    /** Phase 7 — the £147 price the Guide switches to once the 50-place founders cap or the 27 Sept 2026 deadline is reached, whichever first. Distinct product/price ID from the founders one so founders vs full-price purchases stay separately trackable in Stripe (client's explicit requirement). */
+    STRIPE_GUIDE_FULL_PRODUCT_ID: z.string().optional(),
+    STRIPE_GUIDE_FULL_PRICE_ID: z.string().optional(),
     STRIPE_MEMBERSHIP_PRODUCT_ID: z.string().optional(),
     STRIPE_MEMBERSHIP_PRICE_ID: z.string().optional(),
     STRIPE_CUSTOMER_PORTAL_CONFIGURATION_ID: z.string().optional(),
@@ -72,6 +77,8 @@ export const env = createEnv({
     SCOREAPP_WEBHOOK_SECRET: z.string().optional(),
     SCOREAPP_API_KEY: z.string().optional(),
     SCOREAPP_SCORECARD_ID: z.string().optional(),
+    /** Phase 11 — the real ScoreApp Fit Check scorecard base URL (e.g. "https://our-scorecard.scoreapp.com/start"), client-owed (top-level §10 item 14). Not yet supplied — the link builder safely no-ops without it rather than guessing a URL. */
+    SCOREAPP_FIT_CHECK_URL: z.string().optional(),
 
     SENTRY_DSN: z.string().optional(),
     SENTRY_AUTH_TOKEN: z.string().optional(),
@@ -94,6 +101,7 @@ export const env = createEnv({
     SUPPORT_EMAIL: process.env.SUPPORT_EMAIL,
     ADMIN_ALERT_EMAIL: process.env.ADMIN_ALERT_EMAIL,
     SIGNED_LINK_SECRET: process.env.SIGNED_LINK_SECRET,
+    SESSION_SECRET: process.env.SESSION_SECRET,
     CRON_SECRET: process.env.CRON_SECRET,
 
     EXTERNAL_SIDE_EFFECTS_ENABLED: process.env.EXTERNAL_SIDE_EFFECTS_ENABLED,
@@ -112,6 +120,8 @@ export const env = createEnv({
     STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
     STRIPE_GUIDE_PRODUCT_ID: process.env.STRIPE_GUIDE_PRODUCT_ID,
     STRIPE_GUIDE_PRICE_ID: process.env.STRIPE_GUIDE_PRICE_ID,
+    STRIPE_GUIDE_FULL_PRODUCT_ID: process.env.STRIPE_GUIDE_FULL_PRODUCT_ID,
+    STRIPE_GUIDE_FULL_PRICE_ID: process.env.STRIPE_GUIDE_FULL_PRICE_ID,
     STRIPE_MEMBERSHIP_PRODUCT_ID: process.env.STRIPE_MEMBERSHIP_PRODUCT_ID,
     STRIPE_MEMBERSHIP_PRICE_ID: process.env.STRIPE_MEMBERSHIP_PRICE_ID,
     STRIPE_CUSTOMER_PORTAL_CONFIGURATION_ID: process.env.STRIPE_CUSTOMER_PORTAL_CONFIGURATION_ID,
@@ -151,6 +161,7 @@ export const env = createEnv({
     SCOREAPP_WEBHOOK_SECRET: process.env.SCOREAPP_WEBHOOK_SECRET,
     SCOREAPP_API_KEY: process.env.SCOREAPP_API_KEY,
     SCOREAPP_SCORECARD_ID: process.env.SCOREAPP_SCORECARD_ID,
+    SCOREAPP_FIT_CHECK_URL: process.env.SCOREAPP_FIT_CHECK_URL,
 
     SENTRY_DSN: process.env.SENTRY_DSN,
     SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,

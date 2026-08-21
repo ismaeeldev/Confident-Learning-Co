@@ -48,25 +48,33 @@ export async function consumeSignedLink(
     return { outcome: "invalid" };
   }
 
-  const [purchase] = await db
-    .select({ id: purchases.id })
-    .from(purchases)
-    .where(
-      and(
-        eq(purchases.contactId, verified.contactId),
-        eq(purchases.kind, "guide"),
-        eq(purchases.status, "paid"),
-      ),
-    )
-    .limit(1);
+  // Guide-ownership is an entitlement check, not an identity check — it
+  // applies to continuation/reentry (which exist specifically to hand a
+  // Guide owner into membership) but not to login: signing in only proves
+  // "this is contact X", and membership-state gating happens separately
+  // at the page level (Phase 4), so a login link must keep working even
+  // for a contact whose Guide purchase was later refunded.
+  if (verified.kind !== "login") {
+    const [purchase] = await db
+      .select({ id: purchases.id })
+      .from(purchases)
+      .where(
+        and(
+          eq(purchases.contactId, verified.contactId),
+          eq(purchases.kind, "guide"),
+          eq(purchases.status, "paid"),
+        ),
+      )
+      .limit(1);
 
-  if (!purchase) {
-    logger.warn("Signed link used by a contact with no paid Guide purchase on record", {
-      provider: "internal",
-      action: "consumeSignedLink",
-      errorCode: "not_guide_owner",
-    });
-    return { outcome: "not_guide_owner" };
+    if (!purchase) {
+      logger.warn("Signed link used by a contact with no paid Guide purchase on record", {
+        provider: "internal",
+        action: "consumeSignedLink",
+        errorCode: "not_guide_owner",
+      });
+      return { outcome: "not_guide_owner" };
+    }
   }
 
   const [claimed] = await db

@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 const heroTrustItems = [
   { icon: Users2, label: "Community across all four age bands" },
   { icon: BookOpen, label: "New Confidence Library material every month" },
-  { icon: Video, label: "Bi-weekly live sessions on Zoom" },
+  { icon: Video, label: "Fortnightly live sessions on Zoom" },
 ] as const;
 
 const founders = [
@@ -58,7 +58,7 @@ const benefits = [
   {
     icon: Video,
     label: "Live Sessions",
-    body: "The bi-weekly live session on Zoom, where we work through real situations from across the range.",
+    body: "The fortnightly live session on Zoom, where we work through real situations from across the range.",
   },
   {
     icon: KeyRound,

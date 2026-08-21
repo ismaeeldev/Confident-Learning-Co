@@ -1,0 +1,1 @@
+ALTER TYPE "public"."form_submission_kind" ADD VALUE 'membership_join_consent';

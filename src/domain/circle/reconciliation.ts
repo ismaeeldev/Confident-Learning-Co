@@ -40,18 +40,24 @@ export async function reconcileSpaceGroupAccess(
       accessGrantId: accessGrants.id,
       contactId: accessGrants.contactId,
       email: contacts.email,
+      circleMemberId: accessGrants.circleMemberId,
     })
     .from(accessGrants)
     .innerJoin(contacts, eq(accessGrants.contactId, contacts.id))
     .where(and(eq(accessGrants.circleSpaceGroupId, spaceGroupId), eq(accessGrants.status, "active")));
 
   const findings: ReconciliationFinding[] = [];
-  const expectedEmails = new Set(activeGrants.map((g) => g.email));
+  // R3: "Do not link by matching an email string, at any point, including
+  // in reconciliation and revocation" — every check below resolves
+  // strictly via the stored circleMemberId, never provider.findMemberByEmail.
+  const expectedMemberIds = new Set(
+    activeGrants.map((g) => g.circleMemberId).filter((id): id is string => !!id),
+  );
 
   for (const grant of activeGrants) {
-    const member = await provider.findMemberByEmail(grant.email);
-
-    if (!member) {
+    if (!grant.circleMemberId) {
+      // An active grant with no stored Circle identifier was never
+      // successfully provisioned — a real gap, not resolvable by email.
       findings.push({
         contactId: grant.contactId,
         email: grant.email,
@@ -62,7 +68,7 @@ export async function reconcileSpaceGroupAccess(
       continue;
     }
 
-    const inspection = await provider.inspectAccess({ memberId: member.id, spaceGroupId });
+    const inspection = await provider.inspectAccess({ memberId: grant.circleMemberId, spaceGroupId });
     if (!inspection.hasAccess) {
       findings.push({
         contactId: grant.contactId,
@@ -81,9 +87,10 @@ export async function reconcileSpaceGroupAccess(
 
   // Anyone Circle says has access but we have no active grant for is
   // "extra" — access that outlived (or never had) an internal record.
+  // Matched by member id, never email, for the same R3 reason as above.
   const actualMembers = await provider.listSpaceGroupMembers(spaceGroupId);
   for (const member of actualMembers) {
-    if (!expectedEmails.has(member.email)) {
+    if (!expectedMemberIds.has(member.id)) {
       findings.push({ email: member.email, spaceGroupId, kind: "extra" });
     }
   }

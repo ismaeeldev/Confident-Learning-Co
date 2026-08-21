@@ -10,11 +10,19 @@ import { CIRCLE_MEMBERSHIP_CHECKOUT_PATH, PUBLIC_ROUTES } from "@/config/canon";
 type Database = NeonHttpDatabase<typeof schema>;
 
 /**
- * Shared handler for both /checkout/membership/[token] (continuation) and
- * /checkout/re-entry/[token] (reentry) — verifies + claims the token, then
- * either redirects to Circle's real paywall checkout or to a friendly
- * explanation page. This route never processes payment itself; Circle's
- * own native paywall does (see CIRCLE_MEMBERSHIP_CHECKOUT_PATH).
+ * DEPRECATED, no longer called by anything (Phase 3, 20 Aug 2026). The
+ * client confirmed continuation/re-entry links must never redirect
+ * straight into Circle checkout any more — both routes now redirect to
+ * /login unconditionally instead (see their route.ts files). Kept here
+ * rather than deleted in case the "membership join route" work ends up
+ * wanting the verify-and-claim logic — remove this file entirely once
+ * that's settled and nothing references it. See top-level §2 of
+ * V2-BUILD-REQUIREMENTS-IMPLEMENTATION-GUIDE.md for the full context.
+ *
+ * Original purpose: shared handler for both /checkout/membership/[token]
+ * (continuation) and /checkout/re-entry/[token] (reentry) — verified +
+ * claimed the token, then redirected to Circle's real paywall checkout or
+ * a friendly explanation page.
  */
 export async function handleSignedLinkVisit(
   db: Database,

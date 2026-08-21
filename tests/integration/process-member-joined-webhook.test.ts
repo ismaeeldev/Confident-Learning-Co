@@ -124,7 +124,7 @@ describe("processCircleAccessEvent against a real Neon connection", () => {
       expect(jobs).toHaveLength(1);
       expect(jobs[0]?.action).toBe("kit.applyMembershipTag");
       const input = jobs[0]?.input as { applyTags: string[]; removeTags: string[] };
-      expect(input.applyTags).toContain("il-lapsed");
+      expect(input.applyTags).toContain("member-lapsed");
       expect(input.removeTags).toContain("member-inside-the-loop");
     });
 

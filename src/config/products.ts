@@ -24,6 +24,15 @@ export const products: Record<ProductKey, ProductConfig> = {
     stripeProductId: env.STRIPE_GUIDE_PRODUCT_ID,
     stripePriceId: env.STRIPE_GUIDE_PRICE_ID,
   },
+  membership: {
+    key: "membership",
+    displayName: "Inside the Loop membership",
+    founderPriceMinor: 2499,
+    fullPriceMinor: 2499,
+    currency: "gbp",
+    stripeProductId: env.STRIPE_MEMBERSHIP_PRODUCT_ID,
+    stripePriceId: env.STRIPE_MEMBERSHIP_PRICE_ID,
+  },
   pack_homework: {
     key: "pack_homework",
     displayName: "Homework Confidence Pack",

@@ -12,6 +12,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     PUBLIC_ROUTES.insideTheLoop,
     // Work With Us Closely is members-only (not public-facing) — see note in
     // src/app/(marketing)/work-with-us/page.tsx — deliberately excluded here.
+    // Phase 11 (Annexe A): pathway, where-to-start, and pathway/booked are
+    // all deliberately excluded here too — pathway is members-only, and
+    // where-to-start/pathway/booked must be unlisted even though they're
+    // reachable without signing in.
     PUBLIC_ROUTES.about,
     PUBLIC_ROUTES.articles,
     PUBLIC_ROUTES.privacy,

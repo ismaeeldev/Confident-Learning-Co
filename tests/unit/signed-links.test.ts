@@ -40,6 +40,16 @@ describe("signed links (jwt sign/verify)", () => {
     await expect(verifySignedLinkToken(tampered, "reentry")).rejects.toBeInstanceOf(SignedLinkError);
   });
 
+  it("creates and verifies a login-kind token round-trip (Phase 3)", async () => {
+    const contactId = randomUUID();
+    const created = await createSignedLink(contactId, "login", 60);
+
+    const verified = await verifySignedLinkToken(created.token, "login");
+
+    expect(verified.contactId).toBe(contactId);
+    expect(verified.kind).toBe("login");
+  });
+
   it("rejects a token signed with a different secret", async () => {
     // Simulate a forged token by mangling the payload segment.
     const contactId = randomUUID();

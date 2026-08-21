@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { http, HttpResponse } from "msw";
 import { mswServer } from "../mocks/server";
 import { KIT_TEST_BASE_URL } from "../mocks/kit-handlers";
+import { KIT_TAGS } from "@/config/canon";
 
 /**
  * Contract tests for src/integrations/kit/client.ts against sanitized MSW
@@ -56,12 +57,12 @@ describe("KitApiClient contract", () => {
     ).rejects.toThrow(/no kit tag id configured/i);
   });
 
-  it("refuses to remove the permanent client-guide tag, even with a valid tag ID", async () => {
+  it("refuses to remove the permanent guide-owner tag, even with a valid tag ID", async () => {
     const { createKitApiClient } = await import("@/integrations/kit/client");
     const client = createKitApiClient({ apiSecret: "test-secret", baseUrl: KIT_TEST_BASE_URL });
 
     await expect(
-      client.removeTag({ subscriberId: "42", tag: "client-guide" }),
+      client.removeTag({ subscriberId: "42", tag: KIT_TAGS.clientGuide }),
     ).rejects.toThrow(/permanent/i);
   });
 

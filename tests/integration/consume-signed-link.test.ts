@@ -92,4 +92,32 @@ describe("consumeSignedLink against a real Neon connection", () => {
     const result = await consumeSignedLink(db, link.token, "reentry");
     expect(result.outcome).toBe("invalid");
   });
+
+  it("login kind succeeds even without a paid Guide purchase — signing in is an identity check, not an entitlement check", async () => {
+    const [contact] = await db
+      .insert(contacts)
+      .values({ email: `test-${randomUUID()}@example.invalid` })
+      .returning();
+    if (!contact) throw new Error("failed to insert contact");
+    createdContactIds.push(contact.id);
+
+    const link = await createSignedLink(contact.id, "login", 60);
+    const result = await consumeSignedLink(db, link.token, "login");
+
+    expect(result.outcome).toBe("success");
+    if (result.outcome === "success") {
+      expect(result.contactId).toBe(contact.id);
+    }
+  });
+
+  it("login kind still rejects a replayed (already used) token", async () => {
+    const contact = await makeGuideOwner();
+    const link = await createSignedLink(contact.id, "login", 60);
+
+    const first = await consumeSignedLink(db, link.token, "login");
+    expect(first.outcome).toBe("success");
+
+    const second = await consumeSignedLink(db, link.token, "login");
+    expect(second.outcome).toBe("already_used");
+  });
 });

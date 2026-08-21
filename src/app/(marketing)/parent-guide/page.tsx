@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
-import { ArrowRight, Gift, ShieldCheck } from "lucide-react";
+import { ArrowRight, Gift } from "lucide-react";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Reveal } from "@/components/motion/Reveal";
 import { EditorialImage } from "@/components/content/EditorialImage";
 import { FounderPortrait } from "@/components/content/FounderPortrait";
 import { QuoteBlock } from "@/components/content/QuoteBlock";
-import { PendingCheckoutButton } from "@/components/content/PendingCheckoutButton";
 import { PrimaryCTA } from "@/components/content/PrimaryCTA";
 import { Eyebrow } from "@/components/content/Eyebrow";
-import { products, formatMinorAsGbp, membershipConfig } from "@/config/products";
+import { FoundersPricingBlock } from "@/components/content/FoundersPricingBlock";
+import { formatMinorAsGbp, membershipConfig } from "@/config/products";
 
 export const metadata: Metadata = {
   title: "The Learning Confidence Parent Guide",
@@ -30,8 +30,6 @@ export const metadata: Metadata = {
       "The complete method for rebuilding your child's confidence in learning, delivered entirely through you. Written for the whole of the 6 to 16 age group.",
   },
 };
-
-const guide = products.guide;
 
 const ageBands = [
   {
@@ -482,7 +480,7 @@ export default function ParentGuidePage() {
                       Included: 30 days&rsquo; membership of Inside the Loop
                     </h3>
                     <p className="text-brand-navy-800 text-sm sm:text-base leading-relaxed mt-1">
-                      A month of full membership: the community, the resource library, the bi-weekly
+                      A month of full membership: the community, the resource library, the fortnightly
                       live session, and both specialists in the room. After{" "}
                       {membershipConfig.includedDays} days, staying is your choice at{" "}
                       {formatMinorAsGbp(membershipConfig.priceMinor)} per month. Nothing converts
@@ -617,37 +615,7 @@ export default function ParentGuidePage() {
               
               <div aria-hidden="true" className="relative z-10 h-0.5 w-12 bg-brand-gold-500 rounded-full" />
               
-              <div className="relative z-10 flex flex-col items-center gap-1.5 text-center bg-brand-cream-200/50 border border-brand-cream-300/40 rounded-2xl px-6 py-4 w-full">
-                <p className="text-[10px] text-brand-sage-800 uppercase tracking-widest font-bold">Special Pricing</p>
-                <div className="flex items-baseline gap-2.5 mt-0.5">
-                  <span className="text-brand-navy-950 text-3xl sm:text-4xl font-extrabold font-heading leading-none">
-                    {formatMinorAsGbp(guide.founderPriceMinor!)}
-                  </span>
-                  <span className="text-muted-foreground text-sm line-through">
-                    Full price {formatMinorAsGbp(guide.fullPriceMinor!)}
-                  </span>
-                </div>
-              </div>
-
-              <div className="relative z-10 w-full flex flex-col items-center gap-4">
-                {guide.stripePriceId ? (
-                  <PrimaryCTA href="/checkout/guide" size="lg" arrow className="w-full shadow-[0_10px_25px_-5px_rgba(201,169,97,0.45)]">
-                    {`Get the Parent Guide, ${formatMinorAsGbp(guide.founderPriceMinor!)}`}
-                  </PrimaryCTA>
-                ) : (
-                  <PendingCheckoutButton
-                    label={`Get the Parent Guide, ${formatMinorAsGbp(guide.founderPriceMinor!)}`}
-                    size="lg"
-                    className="w-full"
-                  />
-                )}
-                
-                <p className="text-muted-foreground flex items-center justify-center gap-2 text-xs text-center mt-2 max-w-sm">
-                  <ShieldCheck className="text-brand-sage-700 size-4 shrink-0" aria-hidden="true" />
-                  Secure checkout through Stripe. The Guide and your community invitation arrive by
-                  email within minutes.
-                </p>
-              </div>
+              <FoundersPricingBlock />
             </div>
           </Reveal>
         </Container>

@@ -1,0 +1,1 @@
+ALTER TYPE "public"."purchase_kind" ADD VALUE 'membership' BEFORE 'pack_homework';

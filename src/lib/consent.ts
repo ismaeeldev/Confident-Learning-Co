@@ -22,3 +22,14 @@ export function setStoredConsent(state: "granted" | "denied"): void {
   window.localStorage.setItem(CONSENT_STORAGE_KEY, state);
   window.dispatchEvent(new CustomEvent("cl-consent-change", { detail: state }));
 }
+
+/**
+ * Clears the stored choice so the banner reappears — the persistent
+ * "Cookie settings" link a visitor uses to change their mind later
+ * (TCLC_Cookie_Policy_and_Consent_Build_v2.docx §3.3).
+ */
+export function resetStoredConsent(): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(CONSENT_STORAGE_KEY);
+  window.dispatchEvent(new CustomEvent("cl-consent-reset"));
+}

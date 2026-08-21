@@ -20,6 +20,7 @@ export const childBandEnum = pgEnum("child_band", [
 
 export const purchaseKindEnum = pgEnum("purchase_kind", [
   "guide",
+  "membership",
   "pack_homework",
   "pack_conversations",
   "pack_parents_evening",
@@ -97,6 +98,10 @@ export const integrationJobStatusEnum = pgEnum("integration_job_status", [
 export const formSubmissionKindEnum = pgEnum("form_submission_kind", [
   "newsletter",
   "reset_enquiry",
+  "login_request",
+  "membership_join_consent",
+  "purchase_consent",
+  "member_checkin",
 ]);
 
 export const formSubmissionStatusEnum = pgEnum("form_submission_status", [
@@ -109,7 +114,7 @@ export const formSubmissionStatusEnum = pgEnum("form_submission_status", [
 
 export const auditActorTypeEnum = pgEnum("audit_actor_type", ["system", "admin", "provider"]);
 
-export const signedLinkKindEnum = pgEnum("signed_link_kind", ["continuation", "reentry"]);
+export const signedLinkKindEnum = pgEnum("signed_link_kind", ["continuation", "reentry", "login"]);
 
 const timestamps = {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -126,6 +131,11 @@ export const contacts = pgTable(
     childBand: childBandEnum("child_band"),
     marketingConsent: boolean("marketing_consent").notNull().default(false),
     marketingConsentAt: timestamp("marketing_consent_at", { withTimezone: true }),
+    /** Membership identity fields (Build Addendum A v2.2, R2) — only populated once a member joins Inside the Loop; null for Guide-only contacts. */
+    fullLegalName: text("full_legal_name"),
+    postalAddress: text("postal_address"),
+    telephoneNumber: text("telephone_number"),
+    ageConfirmedAt: timestamp("age_confirmed_at", { withTimezone: true }),
     kitSubscriberId: text("kit_subscriber_id"),
     circleMemberId: text("circle_member_id"),
     scoreAppLeadId: text("scoreapp_lead_id"),

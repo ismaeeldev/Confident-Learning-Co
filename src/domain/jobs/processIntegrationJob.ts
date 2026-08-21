@@ -3,10 +3,11 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
 import * as schema from "@/db/schema";
-import { contacts, accessGrants } from "@/db/schema";
+import { contacts } from "@/db/schema";
 import type { EmailProvider } from "@/integrations/kit/types";
 import type { CommunityProvider } from "@/integrations/circle/types";
 import { assertTagRemovable } from "@/domain/contacts/kitTags";
+import { issueSingleUseInvitation } from "@/domain/circle/issueSingleUseInvitation";
 import { logger } from "@/lib/logger";
 import { createSignedLink } from "@/lib/signedLinks";
 import { env } from "@/lib/env";
@@ -66,6 +67,8 @@ export async function processIntegrationJob(
       return handleApplyResetInterestTag(db, providers.email, job);
     case "circle.provisionGuideAccess":
       return handleProvisionGuideAccess(db, providers.community, job);
+    case "circle.issueMembershipInvitation":
+      return handleIssueMembershipInvitation(db, providers.community, job);
     case "internal.notifyAdminResetEnquiry":
       return handleNotifyAdminResetEnquiry(job);
     default:
@@ -195,27 +198,38 @@ async function handleProvisionGuideAccess(
 ): Promise<void> {
   const input = provisionGuideAccessInput.parse(job.input);
   const contact = await getContactOrThrow(db, job.contactId);
+  if (!job.accessGrantId) throw new Error("circle.provisionGuideAccess job is missing accessGrantId");
 
-  // Handles all four cases Step 7 requires: existing member (grant only),
-  // brand-new member (invite, which grants in the same call), and
-  // already-authorized access (grantAccess is a safe no-op if repeated).
-  let member = await community.findMemberByEmail(contact.email);
-  if (member) {
-    await community.grantAccess({ memberId: member.id, spaceGroupId: input.spaceGroupId });
-  } else {
-    member = await community.inviteMember({
-      email: contact.email,
-      firstName: contact.firstName ?? undefined,
-      spaceGroupId: input.spaceGroupId,
-    });
-  }
+  await issueSingleUseInvitation(db, community, {
+    contactId: contact.id,
+    accessGrantId: job.accessGrantId,
+    spaceGroupId: input.spaceGroupId,
+    email: contact.email,
+    firstName: contact.firstName ?? undefined,
+  });
+}
 
-  await db.update(contacts).set({ circleMemberId: member.id }).where(eq(contacts.id, contact.id));
+/**
+ * Background retry path for membership invitation issuance (R3 rebuild).
+ * The primary path is synchronous, in the Stripe webhook itself
+ * (processMembershipCheckout.ts) — this job only exists to catch up if
+ * that synchronous attempt failed. Same idempotent-safe shape as
+ * handleProvisionGuideAccess: re-running is always safe.
+ */
+async function handleIssueMembershipInvitation(
+  db: Database,
+  community: CommunityProvider,
+  job: JobToProcess,
+): Promise<void> {
+  const input = provisionGuideAccessInput.parse(job.input);
+  const contact = await getContactOrThrow(db, job.contactId);
+  if (!job.accessGrantId) throw new Error("circle.issueMembershipInvitation job is missing accessGrantId");
 
-  if (job.accessGrantId) {
-    await db
-      .update(accessGrants)
-      .set({ status: "active", circleMemberId: member.id, provisionedAt: new Date() })
-      .where(eq(accessGrants.id, job.accessGrantId));
-  }
+  await issueSingleUseInvitation(db, community, {
+    contactId: contact.id,
+    accessGrantId: job.accessGrantId,
+    spaceGroupId: input.spaceGroupId,
+    email: contact.email,
+    firstName: contact.firstName ?? undefined,
+  });
 }

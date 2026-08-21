@@ -2,12 +2,19 @@ import { NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { db } from "@/db/client";
 import { getPaymentProvider } from "@/integrations/stripe/client";
+import { getCommunityProvider } from "@/lib/providers";
 import { claimWebhookEvent, completeWebhookEvent, failWebhookEvent } from "@/lib/idempotency";
 import {
   processAsyncPaymentFailed,
   processAsyncPaymentSucceeded,
   processGuideCheckoutCompleted,
 } from "@/domain/purchases/processGuideCheckout";
+import { processMembershipCheckoutCompleted } from "@/domain/purchases/processMembershipCheckout";
+import { processRefund } from "@/domain/purchases/processRefund";
+import {
+  handleSubscriptionUpdated,
+  handleSubscriptionDeleted,
+} from "@/domain/subscriptions/processSubscriptionEvent";
 import { logger } from "@/lib/logger";
 
 /**
@@ -54,28 +61,85 @@ export async function POST(request: Request) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
         const lineItem = getSessionPriceFromMetadata(session);
-        await processGuideCheckoutCompleted(db, {
-          stripeCheckoutSessionId: session.id,
-          stripePaymentIntentId: normalizeId(session.payment_intent),
-          stripeCustomerId: normalizeId(session.customer),
-          stripeProductId: lineItem.productId,
-          stripePriceId: lineItem.priceId,
-          amountTotal: session.amount_total ?? 0,
-          currency: session.currency ?? "gbp",
-          customerEmail: session.customer_details?.email ?? session.customer_email ?? null,
-          paymentStatus: session.payment_status,
-          productKeyFromMetadata: session.metadata?.productKey,
-        });
+        const productKey = session.metadata?.productKey;
+
+        if (productKey === "membership") {
+          await processMembershipCheckoutCompleted(db, getCommunityProvider(), {
+            stripeCheckoutSessionId: session.id,
+            stripeSubscriptionId: normalizeId(session.subscription),
+            stripeCustomerId: normalizeId(session.customer),
+            stripeProductId: lineItem.productId,
+            stripePriceId: lineItem.priceId,
+            amountTotal: session.amount_total ?? 0,
+            currency: session.currency ?? "gbp",
+            customerEmail: session.customer_details?.email ?? session.customer_email ?? null,
+            productKeyFromMetadata: productKey,
+          });
+        } else {
+          await processGuideCheckoutCompleted(db, {
+            stripeCheckoutSessionId: session.id,
+            stripePaymentIntentId: normalizeId(session.payment_intent),
+            stripeCustomerId: normalizeId(session.customer),
+            stripeProductId: lineItem.productId,
+            stripePriceId: lineItem.priceId,
+            amountTotal: session.amount_total ?? 0,
+            currency: session.currency ?? "gbp",
+            customerEmail: session.customer_details?.email ?? session.customer_email ?? null,
+            paymentStatus: session.payment_status,
+            productKeyFromMetadata: productKey,
+            immediateDeliveryFromMetadata: session.metadata?.immediateDelivery,
+          });
+        }
         break;
       }
       case "checkout.session.async_payment_succeeded": {
         const session = event.data.object as Stripe.Checkout.Session;
-        await processAsyncPaymentSucceeded(db, session.id);
+        await processAsyncPaymentSucceeded(db, session.id, session.metadata?.immediateDelivery);
         break;
       }
       case "checkout.session.async_payment_failed": {
         const session = event.data.object as Stripe.Checkout.Session;
         await processAsyncPaymentFailed(db, session.id);
+        break;
+      }
+      case "customer.subscription.updated": {
+        const subscription = event.data.object as Stripe.Subscription;
+        const currentPeriodEnd = getSubscriptionItemPeriodEnd(subscription);
+        const currentPeriodStart = getSubscriptionItemPeriodStart(subscription);
+        await handleSubscriptionUpdated(db, {
+          stripeSubscriptionId: subscription.id,
+          status: mapStripeSubscriptionStatus(subscription.status),
+          currentPeriodStart: currentPeriodStart ? new Date(currentPeriodStart * 1000) : null,
+          currentPeriodEnd: currentPeriodEnd ? new Date(currentPeriodEnd * 1000) : null,
+          cancelAtPeriodEnd: subscription.cancel_at_period_end,
+          canceledAt: subscription.canceled_at ? new Date(subscription.canceled_at * 1000) : null,
+        });
+        break;
+      }
+      case "customer.subscription.deleted": {
+        const subscription = event.data.object as Stripe.Subscription;
+        await handleSubscriptionDeleted(db, getCommunityProvider(), {
+          stripeSubscriptionId: subscription.id,
+          reason: subscription.cancellation_details?.reason ?? null,
+        });
+        break;
+      }
+      case "charge.refunded": {
+        const charge = event.data.object as Stripe.Charge;
+        const paymentIntentId = normalizeId(charge.payment_intent);
+        if (paymentIntentId) {
+          await processRefund(db, getCommunityProvider(), {
+            stripePaymentIntentId: paymentIntentId,
+            amountRefunded: charge.amount_refunded,
+            currency: charge.currency,
+            fullyRefunded: charge.refunded,
+          });
+        } else {
+          logger.warn("charge.refunded with no payment_intent on the charge", {
+            provider: "stripe",
+            action: "webhook.receive",
+          });
+        }
         break;
       }
       default:
@@ -107,6 +171,44 @@ export async function POST(request: Request) {
 function normalizeId(value: string | { id: string } | null | undefined): string | null {
   if (!value) return null;
   return typeof value === "string" ? value : value.id;
+}
+
+/**
+ * This Stripe API version (2025-03-31+, SDK v22+) moved
+ * current_period_start/end off the top-level Subscription object onto
+ * each SubscriptionItem — see the SDK's own CHANGELOG. A membership
+ * subscription only ever has one item.
+ */
+function getSubscriptionItemPeriodStart(subscription: Stripe.Subscription): number | undefined {
+  return subscription.items.data[0]?.current_period_start;
+}
+function getSubscriptionItemPeriodEnd(subscription: Stripe.Subscription): number | undefined {
+  return subscription.items.data[0]?.current_period_end;
+}
+
+type SubscriptionStatus = (typeof import("@/db/schema").subscriptionStatusEnum.enumValues)[number];
+const KNOWN_SUBSCRIPTION_STATUSES: readonly SubscriptionStatus[] = [
+  "incomplete",
+  "trialing",
+  "active",
+  "past_due",
+  "unpaid",
+  "paused",
+  "canceled",
+];
+
+/** Our subscriptionStatusEnum uses the same strings as Stripe's own subscription.status, except we don't track "incomplete_expired" separately — folded into "incomplete". Stripe's own type includes a forward-compat catch-all string, so this validates against the known list rather than trusting the type alone. */
+function mapStripeSubscriptionStatus(status: string): SubscriptionStatus {
+  if (status === "incomplete_expired") return "incomplete";
+  if ((KNOWN_SUBSCRIPTION_STATUSES as readonly string[]).includes(status)) {
+    return status as SubscriptionStatus;
+  }
+  logger.warn("Unrecognised Stripe subscription status, defaulting to \"incomplete\"", {
+    provider: "stripe",
+    action: "mapStripeSubscriptionStatus",
+    status,
+  });
+  return "incomplete";
 }
 
 /**
