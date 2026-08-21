@@ -3,11 +3,11 @@ import { and, eq, sql } from "drizzle-orm";
 import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
 import * as schema from "@/db/schema";
 import { accessGrants, formSubmissions } from "@/db/schema";
+import { CHECKIN_DAYS, type CheckInDay } from "./checkInDays";
 
 type Database = NeonHttpDatabase<typeof schema>;
 
-export const CHECKIN_DAYS = [14, 30] as const;
-export type CheckInDay = (typeof CHECKIN_DAYS)[number];
+export { CHECKIN_DAYS, type CheckInDay };
 
 export interface CheckInStatus {
   /** null if this member has no membership grant to measure from, or every check-in due so far is already submitted. */

@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { checkInSchema, type CheckInInput } from "@/domain/checkin/checkInSchema";
-import type { CheckInDay } from "@/domain/checkin/checkInStatus";
+import type { CheckInDay } from "@/domain/checkin/checkInDays";
 
 interface MemberCheckInFormProps {
   day: CheckInDay;

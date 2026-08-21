@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CHECKIN_DAYS } from "./checkInStatus";
+import { CHECKIN_DAYS } from "./checkInDays";
 
 /**
  * Phase 12 — member check-in form. Draft content, not client-supplied
