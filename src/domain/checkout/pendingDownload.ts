@@ -4,6 +4,7 @@ import type { NeonHttpDatabase } from "drizzle-orm/neon-http";
 import * as schema from "@/db/schema";
 import { accessGrants, integrationJobs } from "@/db/schema";
 import { recordPurchaseConsent, attachEmailToPurchaseConsent } from "./recordPurchaseConsent";
+import { IMMUTABLE_RULES } from "@/config/canon";
 
 type Database = NeonHttpDatabase<typeof schema>;
 
@@ -53,10 +54,18 @@ export async function releaseDownloadNow(
   accessGrantId: string,
 ): Promise<void> {
   const now = new Date();
+  // Bug fix: the 30-day included-access window must be recomputed from
+  // the new (real) start, not left at the value completeGuidePurchase
+  // originally set from the *held* start (purchase + 14-day hold). Left
+  // untouched, an early self-release silently grants extra free days —
+  // up to nearly 14 extra if released on day 0 of the hold — since
+  // expiresAt would still be 30 days after the *original* delayed start,
+  // not 30 days after access genuinely begins now.
+  const expiresAt = new Date(now.getTime() + IMMUTABLE_RULES.includedAccessDays * 24 * 60 * 60 * 1000);
 
   await db
     .update(accessGrants)
-    .set({ startsAt: now })
+    .set({ startsAt: now, expiresAt })
     .where(and(eq(accessGrants.id, accessGrantId), eq(accessGrants.contactId, contactId)));
 
   await db
