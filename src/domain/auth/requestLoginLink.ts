@@ -6,6 +6,7 @@ import { contacts, formSubmissions } from "@/db/schema";
 import { createSignedLink, LOGIN_LINK_EXPIRY_SECONDS } from "@/lib/signedLinks";
 import { sendTransactionalEmail } from "@/lib/email";
 import { isRateLimited } from "@/lib/rateLimit";
+import { normalizeEmail } from "@/lib/normalizeEmail";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
 import { ALLOWED_POST_LOGIN_REDIRECTS, PUBLIC_ROUTES } from "@/config/canon";
@@ -39,10 +40,18 @@ export async function requestLoginLink(db: Database, email: string, next?: strin
     status: "received",
   });
 
+  // Bug fix (full-codebase review): contacts.email is written normalized
+  // (see upsertContactByEmail/normalizeEmail) but this lookup previously
+  // compared the raw, un-normalized input — a registered member typing
+  // their email with different casing than it was stored under would
+  // silently fail to find their own account and never receive a sign-in
+  // link, with no error surfaced (this function is deliberately
+  // enumeration-safe, so the caller sees the same generic response either
+  // way, making this failure invisible until a real member reported it).
   const [contact] = await db
     .select({ id: contacts.id, firstName: contacts.firstName })
     .from(contacts)
-    .where(eq(contacts.email, email))
+    .where(eq(contacts.email, normalizeEmail(email)))
     .limit(1);
 
   if (!contact) return;

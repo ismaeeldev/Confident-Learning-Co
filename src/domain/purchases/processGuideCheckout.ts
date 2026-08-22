@@ -5,6 +5,7 @@ import * as schema from "@/db/schema";
 import { contacts, purchases, accessGrants } from "@/db/schema";
 import { enqueueIntegrationJob } from "@/lib/integrationJobs";
 import { attachEmailToPurchaseConsent } from "@/domain/checkout/recordPurchaseConsent";
+import { upsertContactByEmail } from "@/domain/contacts/upsertContactByEmail";
 import { sendTransactionalEmail } from "@/lib/email";
 import { env } from "@/lib/env";
 import { logger } from "@/lib/logger";
@@ -348,22 +349,4 @@ async function completeGuidePurchase(
   });
 
   return { accessGrantId: grant.id, releaseDate: runAfter };
-}
-
-async function upsertContactByEmail(db: Database, email: string): Promise<string> {
-  const [existing] = await db.select({ id: contacts.id }).from(contacts).where(eq(contacts.email, email)).limit(1);
-  if (existing) return existing.id;
-
-  const [created] = await db
-    .insert(contacts)
-    .values({ email })
-    .onConflictDoNothing({ target: contacts.email })
-    .returning({ id: contacts.id });
-
-  if (created) return created.id;
-
-  // Lost the insert race to a concurrent request — read the row it created.
-  const [raceWinner] = await db.select({ id: contacts.id }).from(contacts).where(eq(contacts.email, email)).limit(1);
-  if (!raceWinner) throw new Error(`Failed to upsert contact for ${email}`);
-  return raceWinner.id;
 }

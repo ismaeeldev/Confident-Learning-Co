@@ -5,6 +5,7 @@ import * as schema from "@/db/schema";
 import { contacts, purchases, accessGrants, subscriptions } from "@/db/schema";
 import type { CommunityProvider } from "@/integrations/circle/types";
 import { issueSingleUseInvitation } from "@/domain/circle/issueSingleUseInvitation";
+import { upsertContactByEmail } from "@/domain/contacts/upsertContactByEmail";
 import { enqueueIntegrationJob } from "@/lib/integrationJobs";
 import { sendAdminNotificationEmail } from "@/lib/email";
 import { env } from "@/lib/env";
@@ -215,21 +216,4 @@ export async function processMembershipCheckoutCompleted(
 
     return { outcome: "invitation_failed", purchaseId: purchase.id, accessGrantId: grant.id, contactId };
   }
-}
-
-async function upsertContactByEmail(db: Database, email: string): Promise<string> {
-  const [existing] = await db.select({ id: contacts.id }).from(contacts).where(eq(contacts.email, email)).limit(1);
-  if (existing) return existing.id;
-
-  const [created] = await db
-    .insert(contacts)
-    .values({ email })
-    .onConflictDoNothing({ target: contacts.email })
-    .returning({ id: contacts.id });
-
-  if (created) return created.id;
-
-  const [raceWinner] = await db.select({ id: contacts.id }).from(contacts).where(eq(contacts.email, email)).limit(1);
-  if (!raceWinner) throw new Error(`Failed to upsert contact for ${email}`);
-  return raceWinner.id;
 }
