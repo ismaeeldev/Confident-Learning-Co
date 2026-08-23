@@ -10,9 +10,12 @@ import { env } from "@/lib/env";
 import { PUBLIC_ROUTES } from "@/config/canon";
 
 /**
- * Phase 6's consent step. Box 1 (terms) is enforced here server-side, not
- * just in the UI — a direct call with it unticked is rejected regardless
- * of what the client sent. Box 2 never blocks. Consent is recorded
+ * R1's consent step. The two required boxes (age, terms) are enforced
+ * here server-side, not just in the UI — a direct call with either
+ * unticked is rejected regardless of what the client sent. The two
+ * optional boxes never block; immediate release only happens when *both*
+ * are ticked (R1.1: "Immediate supply happens only if both are ticked. If
+ * either is left unticked, the download is held"). Consent is recorded
  * *before* redirecting to Stripe (checkout may never complete), then
  * correlated to the resulting session id — this route creates the Stripe
  * session first specifically so that id exists to record against.
@@ -27,7 +30,10 @@ export async function POST(request: Request) {
 
   const parsed = purchaseConsentSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "You must agree to the terms of sale to continue" }, { status: 400 });
+    return NextResponse.json(
+      { error: "You must confirm you are 18 or over and agree to the terms to continue" },
+      { status: 400 },
+    );
   }
 
   const product = products[parsed.data.productKey];
@@ -67,6 +73,13 @@ export async function POST(request: Request) {
     }
   }
 
+  // R1.1: immediate release requires BOTH optional boxes ticked — either
+  // one alone still holds the download. Computed once here so every
+  // downstream consumer (Stripe metadata, the webhook, the confirmation
+  // email) sees a single already-combined decision, never each box
+  // separately.
+  const immediateDelivery = parsed.data.immediateDeliveryConsent && parsed.data.cancellationRightAcknowledged;
+
   try {
     const session = await provider.createCheckoutSession({
       productKey: parsed.data.productKey,
@@ -75,7 +88,7 @@ export async function POST(request: Request) {
         productKey: parsed.data.productKey,
         stripeProductId,
         stripePriceId,
-        immediateDelivery: String(parsed.data.immediateDelivery),
+        immediateDelivery: String(immediateDelivery),
       },
       successUrl: `${origin}${PUBLIC_ROUTES.checkoutSuccess}?session_id={CHECKOUT_SESSION_ID}`,
       cancelUrl: `${origin}${PUBLIC_ROUTES.checkoutCancelled}`,

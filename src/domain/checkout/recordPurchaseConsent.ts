@@ -10,19 +10,27 @@ import type { PurchaseConsentInput } from "./purchaseConsentSchema";
 type Database = NeonHttpDatabase<typeof schema>;
 
 /**
- * Records the Phase 6 checkout consent — written *before* the Stripe
- * redirect (checkout may never complete), then correlated to the
- * resulting purchase via `stripeCheckoutSessionId` once the session
- * exists. Per the client's own explanation: the tick alone only proves
- * someone clicked something; `consentTextVersion` is what proves what they
- * actually agreed to — never overwritten, always retrievable even after
- * the copy changes.
+ * Records the R1 checkout consent — written *before* the Stripe redirect
+ * (checkout may never complete), then correlated to the resulting purchase
+ * via `stripeCheckoutSessionId` once the session exists.
+ *
+ * R1.3: "A blank field is not evidence of a decision." Each of the four
+ * boxes is recorded as its own positive value — accepted or declined —
+ * with its own timestamp and its own wording version, not one shared
+ * value for the whole submission. In practice all four are presented on
+ * the same screen and submitted in the same request, so the timestamp and
+ * wording version are identical across all four right now — but the shape
+ * itself doesn't assume that, so a future redesign that separates them
+ * onto different screens wouldn't silently lose this per-box evidence.
  */
 export async function recordPurchaseConsent(
   db: Database,
   stripeCheckoutSessionId: string,
   input: PurchaseConsentInput,
 ): Promise<void> {
+  const consentAt = new Date().toISOString();
+  const box = (accepted: boolean) => ({ accepted, timestamp: consentAt, wordingVersion: PURCHASE_CONSENT_VERSION });
+
   // Email is genuinely unknown at this point — Stripe's own hosted
   // Checkout page collects it for a guest purchase, not this consent step
   // — so the row is written with a placeholder and backfilled by
@@ -34,8 +42,10 @@ export async function recordPurchaseConsent(
     payload: {
       productKey: input.productKey,
       productName: products[input.productKey].displayName,
-      termsAgreed: input.termsAgreed,
-      immediateDelivery: input.immediateDelivery,
+      ageConfirmed: box(input.ageConfirmed),
+      termsAgreed: box(input.termsAgreed),
+      immediateDeliveryConsent: box(input.immediateDeliveryConsent),
+      cancellationRightAcknowledged: box(input.cancellationRightAcknowledged),
       stripeCheckoutSessionId,
     },
     consentTextVersion: PURCHASE_CONSENT_VERSION,

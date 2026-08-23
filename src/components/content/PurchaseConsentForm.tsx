@@ -9,19 +9,21 @@ import {
   PURCHASE_CONSENT_COPY,
   type PurchaseConsentInput,
 } from "@/domain/checkout/purchaseConsentSchema";
-import { DELIVERY_HOLD_DAYS, type ProductKey } from "@/config/canon";
+import { DELIVERY_HOLD_DAYS, PUBLIC_ROUTES, type ProductKey } from "@/config/canon";
 
 interface PurchaseConsentFormProps {
   productKey: ProductKey;
 }
 
 /**
- * Phase 6 checkout consent (Guide + 3 packs). Copy is exact per the
- * client's 20 Aug 2026 reply — rendered verbatim via
- * PURCHASE_CONSENT_COPY, not paraphrased. Box 1 is required; box 2 is
- * genuinely optional and must never block submission — declining it just
- * changes what happens next (14-day delivery hold), never whether
- * checkout proceeds.
+ * R1 checkout consent (Build Addendum A v2.8, rewritten 22 Aug 2026) —
+ * four boxes, not two. Copy is exact per PURCHASE_CONSENT_COPY, not
+ * paraphrased. Boxes 1–2 (age, terms) are required; boxes 3–4 (immediate
+ * delivery, cancellation-right acknowledgement) are genuinely optional and
+ * must never block submission on their own — declining either or both
+ * just changes what happens next (14-day delivery hold), never whether
+ * checkout proceeds. Immediate release only happens when *both* optional
+ * boxes are ticked.
  */
 export function PurchaseConsentForm({ productKey }: PurchaseConsentFormProps) {
   const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
@@ -33,14 +35,18 @@ export function PurchaseConsentForm({ productKey }: PurchaseConsentFormProps) {
     formState: { errors },
   } = useForm<PurchaseConsentInput>({
     resolver: zodResolver(purchaseConsentSchema),
-    defaultValues: { productKey, immediateDelivery: false },
+    defaultValues: { productKey, immediateDeliveryConsent: false, cancellationRightAcknowledged: false },
   });
 
   // Live release-date line (Build Change Request 01): computed client-side
   // from today, same DELIVERY_HOLD_DAYS the server actually uses, so it's
   // never allowed to drift out of sync with the real hold logic. useWatch
-  // (not form.watch) is the React Compiler-safe subscription API.
-  const immediateDeliveryTicked = useWatch({ control, name: "immediateDelivery" });
+  // (not form.watch) is the React Compiler-safe subscription API. R1.1:
+  // release only happens once BOTH optional boxes are ticked, so the
+  // "held" message shows unless both are true.
+  const immediateDeliveryConsentTicked = useWatch({ control, name: "immediateDeliveryConsent" });
+  const cancellationRightAcknowledgedTicked = useWatch({ control, name: "cancellationRightAcknowledged" });
+  const willReleaseImmediately = immediateDeliveryConsentTicked && cancellationRightAcknowledgedTicked;
   // Lazy useState initializer, not a plain render-time call — Date.now()
   // is impure and React Compiler rejects calling it directly in the
   // render body; this runs exactly once, on mount, which is what's wanted
@@ -85,8 +91,53 @@ export function PurchaseConsentForm({ productKey }: PurchaseConsentFormProps) {
 
       <div className="flex flex-col gap-4">
         <label className="flex items-start gap-3 text-sm">
+          <input type="checkbox" className="mt-0.5 size-4 shrink-0" {...register("ageConfirmed")} />
+          <span className="text-brand-navy-800">{PURCHASE_CONSENT_COPY.ageConfirmed}</span>
+        </label>
+        {errors.ageConfirmed && (
+          <p className="text-destructive -mt-2 text-xs" role="alert">
+            You must confirm you are 18 or over to continue.
+          </p>
+        )}
+
+        <label className="flex items-start gap-3 text-sm">
           <input type="checkbox" className="mt-0.5 size-4 shrink-0" {...register("termsAgreed")} />
-          <span className="text-brand-navy-800">{PURCHASE_CONSENT_COPY.termsAgreed}</span>
+          {/* R13.3: each of the three document names in this box is a link
+              to its current page, opening in a new tab, so reading them
+              never navigates the buyer away from checkout or loses
+              anything already entered. Wording is otherwise verbatim from
+              PURCHASE_CONSENT_COPY.termsAgreed — only the three document
+              names become links, nothing else changes. */}
+          <span className="text-brand-navy-800">
+            I have read and agree to the{" "}
+            <a
+              href={PUBLIC_ROUTES.terms}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2"
+            >
+              Terms and Conditions of Sale
+            </a>
+            , the{" "}
+            <a
+              href={PUBLIC_ROUTES.communityTerms}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2"
+            >
+              Community Terms of Use
+            </a>{" "}
+            and the{" "}
+            <a
+              href={PUBLIC_ROUTES.privacy}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2"
+            >
+              Privacy Notice
+            </a>
+            .
+          </span>
         </label>
         {errors.termsAgreed && (
           <p className="text-destructive -mt-2 text-xs" role="alert">
@@ -98,16 +149,25 @@ export function PurchaseConsentForm({ productKey }: PurchaseConsentFormProps) {
           <input
             type="checkbox"
             className="mt-0.5 size-4 shrink-0"
-            {...register("immediateDelivery")}
+            {...register("immediateDeliveryConsent")}
           />
-          <span className="text-brand-navy-800">{PURCHASE_CONSENT_COPY.immediateDelivery}</span>
+          <span className="text-brand-navy-800">{PURCHASE_CONSENT_COPY.immediateDeliveryConsent}</span>
         </label>
 
-        {!immediateDeliveryTicked && (
+        <label className="flex items-start gap-3 text-sm">
+          <input
+            type="checkbox"
+            className="mt-0.5 size-4 shrink-0"
+            {...register("cancellationRightAcknowledged")}
+          />
+          <span className="text-brand-navy-800">{PURCHASE_CONSENT_COPY.cancellationRightAcknowledged}</span>
+        </label>
+
+        {!willReleaseImmediately && (
           <p className="text-muted-foreground -mt-2 pl-7 text-xs leading-relaxed">
-            Leave this unticked and we will hold your download until {releaseDate}, so you keep
-            your right to change your mind. You can release it earlier from your account at any
-            time.
+            Leave either of these unticked and we will hold your download until {releaseDate}, so
+            you keep your right to change your mind. You can release it earlier from your account
+            at any time.
           </p>
         )}
 

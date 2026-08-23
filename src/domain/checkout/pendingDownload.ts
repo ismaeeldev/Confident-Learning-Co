@@ -79,8 +79,10 @@ export async function releaseDownloadNow(
   // checkout session involved. Still unique, still queryable the same way.
   await recordPurchaseConsent(db, `self-release:${accessGrantId}:${now.toISOString()}`, {
     productKey: "guide",
+    ageConfirmed: true,
     termsAgreed: true,
-    immediateDelivery: true,
+    immediateDeliveryConsent: true,
+    cancellationRightAcknowledged: true,
   });
   // recordPurchaseConsent writes email as a placeholder (it's designed for
   // pre-payment consent, where the real email isn't known yet) — this is a

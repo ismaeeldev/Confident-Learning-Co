@@ -2,18 +2,28 @@ import { z } from "zod";
 import { PRODUCT_KEYS } from "@/config/canon";
 
 /**
- * Phase 6 checkout consent — Guide + 3 packs. Client-confirmed 20 Aug 2026:
- * box 1 (terms of sale) is required; box 2 (immediate-delivery waiver) is
- * explicitly optional and must never block a purchase (forcing it risks
- * the waiver being ruled not a free choice under UK consumer law). See
- * V2-BUILD-REQUIREMENTS-IMPLEMENTATION-GUIDE.md Phase 6 for the full
- * document-conflict history behind this design.
+ * R1 (Build Addendum A v2.8, rewritten 22 Aug 2026) — four boxes, not two.
+ * Two required (age, terms), two optional (immediate-supply consent,
+ * cancellation-right acknowledgement). Both optional boxes must be ticked
+ * for immediate release — R1.1: "Immediate supply happens only if both are
+ * ticked. If either is left unticked, the download is held." Declining
+ * either or both must never block, warn, or re-prompt (R1.1/acceptance
+ * criteria "Consent capture, optional pair").
+ *
+ * Supersedes the earlier 2-box shape (Phase 6, 20 Aug 2026) — that version
+ * combined the immediate-supply consent and the cancellation-right
+ * acknowledgement into a single box, and didn't capture age or reference
+ * the Community Terms of Use. Both were wrong per the terms the customer
+ * actually enters (Terms and Conditions of Sale v1.2, section 9.2).
  */
 export const purchaseConsentSchema = z.object({
   productKey: z.enum(PRODUCT_KEYS),
+  ageConfirmed: z.literal(true),
   termsAgreed: z.literal(true),
-  /** Optional. true = deliver immediately, waiving the 14-day cancellation right. false = hold delivery for the full 14 days instead. Defaulted in the form itself (useForm defaultValues), not here, so the inferred type stays a plain boolean for react-hook-form's resolver typing. */
-  immediateDelivery: z.boolean(),
+  /** Optional. Consent to immediate supply of the download. Combines with cancellationRightAcknowledged — both must be true for immediate release. Defaulted false in the form itself (useForm defaultValues), not here, so the inferred type stays a plain boolean for react-hook-form's resolver typing. */
+  immediateDeliveryConsent: z.boolean(),
+  /** Optional. Acknowledgement that the 14-day cancellation right is lost once the download starts. Combines with immediateDeliveryConsent — both must be true for immediate release. */
+  cancellationRightAcknowledged: z.boolean(),
   // Same honeypot convention as the other public forms in this codebase.
   honeypot: z.string().max(0).optional(),
 });
@@ -21,12 +31,21 @@ export const purchaseConsentSchema = z.object({
 export type PurchaseConsentInput = z.infer<typeof purchaseConsentSchema>;
 
 /**
- * Exact wording, client-supplied 20 Aug 2026 — must not be paraphrased.
- * Used unchanged for all four products (Guide + 3 packs), client-confirmed
- * — no product-name substitution.
+ * R1.1's exact wording. The two required boxes are client-confirmed, final
+ * copy. The two optional boxes are drafted to say exactly what Terms and
+ * Conditions of Sale v1.2 section 9.2 promises they say — the client is
+ * confirming the final wording with their solicitor (R1.1: "Build the
+ * structure now; do not hard code the strings in a way that makes a
+ * wording change a code change"). This constant is that structure: the
+ * wording lives in exactly one place, so a future change is a copy edit
+ * here, not a change to the form, the schema, or the recording logic.
  */
 export const PURCHASE_CONSENT_COPY = {
-  termsAgreed: "I have read and agree to the Terms and Conditions of Sale and the Privacy Policy.",
-  immediateDelivery:
-    "I want my download straight away, rather than waiting for my 14 day cancellation period to end. I understand that once my download begins I lose my right to change my mind and cancel for a refund. My rights if the product is faulty or not as described are not affected.",
+  ageConfirmed: "I confirm I am eighteen years of age or over.",
+  termsAgreed:
+    "I have read and agree to the Terms and Conditions of Sale, the Community Terms of Use and the Privacy Notice.",
+  immediateDeliveryConsent:
+    "I ask The Confident Learning Co. to supply the Learning Confidence Parent Guide download immediately, rather than waiting until my fourteen day cancellation period has passed.",
+  cancellationRightAcknowledged:
+    "I understand that once the download starts I lose my right to cancel and get my money back simply because I have changed my mind.",
 } as const;
