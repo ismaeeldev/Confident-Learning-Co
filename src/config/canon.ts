@@ -119,6 +119,8 @@ export const PUBLIC_ROUTES = {
   terms: "/terms",
   cookies: "/cookies",
   refundPolicy: "/refund-policy",
+  /** R13 (Build Addendum A v2.8) — new legal page, referenced from the Terms of Sale, the R1 consent boxes, and Community Rules. */
+  communityTerms: "/community-terms",
 } as const;
 
 export const PRODUCT_KEYS = [

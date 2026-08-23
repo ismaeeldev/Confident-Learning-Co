@@ -20,6 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     PUBLIC_ROUTES.articles,
     PUBLIC_ROUTES.privacy,
     PUBLIC_ROUTES.terms,
+    PUBLIC_ROUTES.communityTerms,
     PUBLIC_ROUTES.cookies,
     PUBLIC_ROUTES.refundPolicy,
   ].map((path) => ({

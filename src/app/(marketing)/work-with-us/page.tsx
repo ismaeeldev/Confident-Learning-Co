@@ -7,7 +7,6 @@ import { EditorialImage } from "@/components/content/EditorialImage";
 import { FounderPortrait } from "@/components/content/FounderPortrait";
 import { PendingCheckoutButton } from "@/components/content/PendingCheckoutButton";
 import { Eyebrow } from "@/components/content/Eyebrow";
-import { products, formatMinorAsGbp } from "@/config/products";
 
 /**
  * Members-only page: not linked from primary/footer nav (see
@@ -42,8 +41,6 @@ const offers = [
     shotNote: "seated",
     label: "Live, led by Adam and Michela together",
     name: "The Group Programme",
-    price: formatMinorAsGbp(products.group.founderPriceMinor!),
-    priceNote: null as string | null,
     intro:
       "A small cohort of parents, led live by Adam and Michela together, working the method over a set number of weeks. Cohorts run across the full 6 to 16 range and the sessions are structured so both ends are served properly rather than one being an afterthought.",
     inclusions: [
@@ -58,8 +55,6 @@ const offers = [
     shotNote: "seated",
     label: "Private, one family at a time",
     name: "The 1:1 Resets",
-    price: formatMinorAsGbp(products.confidence_reset.founderPriceMinor!),
-    priceNote: "each",
     intro:
       "Private, focused work with one family at a time. The Confidence Reset rebuilds a child’s confidence in learning through you. The Calm Reset is its settle-side partner, for the child who cannot yet get steady enough for the confidence work to land.",
     inclusions: [
@@ -130,20 +125,6 @@ export default function WorkWithUsPage() {
                   <div className="flex flex-col gap-1">
                     <Eyebrow>{offer.label}</Eyebrow>
                     <h2 className="font-heading text-2xl">{offer.name}</h2>
-                  </div>
-
-                  <div className="border-border/70 flex flex-col gap-0.5 border-b pb-5">
-                    <span className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
-                      Founders price
-                    </span>
-                    <p className="flex items-baseline gap-1.5">
-                      <span className="font-heading text-brand-navy-900 text-3xl sm:text-4xl">
-                        {offer.price}
-                      </span>
-                      {offer.priceNote && (
-                        <span className="text-muted-foreground text-sm">{offer.priceNote}</span>
-                      )}
-                    </p>
                   </div>
 
                   <p className="text-brand-navy-800 text-sm leading-relaxed">{offer.intro}</p>
@@ -245,10 +226,7 @@ export default function WorkWithUsPage() {
 
           <Reveal delay={0.1}>
             <div className="mt-10 flex flex-col items-center gap-3 sm:mt-12">
-              <PendingCheckoutButton
-                label={`Book a Pathway Call, ${formatMinorAsGbp(products.pathway.founderPriceMinor!)}`}
-                size="lg"
-              />
+              <PendingCheckoutButton label="Book a Pathway Call" size="lg" />
             </div>
           </Reveal>
         </Container>
