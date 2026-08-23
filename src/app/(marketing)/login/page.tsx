@@ -43,10 +43,13 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const expiredOrInvalid = reason === "expired" || reason === "invalid";
   const oldLinkNotice = notice ? OLD_LINK_NOTICE[notice] : undefined;
   // Old continuation/re-entry links land here to sign in, then must
-  // continue to the membership join route, not the ordinary member home.
+  // continue to the membership access-needed page, not the ordinary
+  // member home. R5.3 (Build Addendum A v2.8): the website's own
+  // membership checkout is withdrawn — access/pending points members at
+  // the real Circle paywall instead.
   const next =
     notice === "continue-membership" || notice === "re-entry"
-      ? PUBLIC_ROUTES.checkoutMembershipJoin
+      ? `${PUBLIC_ROUTES.accessPending}?reason=not_active_member`
       : undefined;
 
   return (

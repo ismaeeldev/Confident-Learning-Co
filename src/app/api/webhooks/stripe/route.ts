@@ -9,7 +9,6 @@ import {
   processAsyncPaymentSucceeded,
   processGuideCheckoutCompleted,
 } from "@/domain/purchases/processGuideCheckout";
-import { processMembershipCheckoutCompleted } from "@/domain/purchases/processMembershipCheckout";
 import { processPathwayCheckoutCompleted } from "@/domain/purchases/processPathwayCheckout";
 import { processRefund } from "@/domain/purchases/processRefund";
 import {
@@ -64,19 +63,15 @@ export async function POST(request: Request) {
         const lineItem = getSessionPriceFromMetadata(session);
         const productKey = session.metadata?.productKey;
 
-        if (productKey === "membership") {
-          await processMembershipCheckoutCompleted(db, getCommunityProvider(), {
-            stripeCheckoutSessionId: session.id,
-            stripeSubscriptionId: normalizeId(session.subscription),
-            stripeCustomerId: normalizeId(session.customer),
-            stripeProductId: lineItem.productId,
-            stripePriceId: lineItem.priceId,
-            amountTotal: session.amount_total ?? 0,
-            currency: session.currency ?? "gbp",
-            customerEmail: session.customer_details?.email ?? session.customer_email ?? null,
-            productKeyFromMetadata: productKey,
-          });
-        } else if (productKey === "pathway") {
+        // R5.3 (Build Addendum A v2.8): membership is sold through
+        // Circle's own native paywall, not a website Stripe checkout —
+        // the "membership" productKey branch that used to handle this is
+        // withdrawn. Membership start/lapse now reaches the database
+        // exclusively via the Circle-triggered webhook at
+        // /api/webhooks/circle (src/domain/circle/processMemberJoinedWebhook.ts),
+        // which already matches R5.3's "tagging cannot come from a Stripe
+        // webhook" requirement.
+        if (productKey === "pathway") {
           await processPathwayCheckoutCompleted(db, {
             stripeCheckoutSessionId: session.id,
             stripePaymentIntentId: normalizeId(session.payment_intent),

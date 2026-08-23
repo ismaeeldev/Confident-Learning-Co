@@ -82,6 +82,9 @@ export const env = createEnv({
     /** Phase 11 — the real ScoreApp Fit Check scorecard base URL (e.g. "https://our-scorecard.scoreapp.com/start"), client-owed (top-level §10 item 14). Not yet supplied — the link builder safely no-ops without it rather than guessing a URL. */
     SCOREAPP_FIT_CHECK_URL: z.string().optional(),
 
+    /** R5.3 (Build Addendum A v2.8) — Inside the Loop continuation is sold through Circle's own native paywall, not a website checkout. Client-owed: the real paywall URL for the member to complete that purchase. Not yet supplied — pages that would link here safely fall back to a "contact us" message without guessing a URL. */
+    CIRCLE_MEMBERSHIP_PAYWALL_URL: z.string().optional(),
+
     SENTRY_DSN: z.string().optional(),
     SENTRY_AUTH_TOKEN: z.string().optional(),
 
@@ -165,6 +168,7 @@ export const env = createEnv({
     SCOREAPP_API_KEY: process.env.SCOREAPP_API_KEY,
     SCOREAPP_SCORECARD_ID: process.env.SCOREAPP_SCORECARD_ID,
     SCOREAPP_FIT_CHECK_URL: process.env.SCOREAPP_FIT_CHECK_URL,
+    CIRCLE_MEMBERSHIP_PAYWALL_URL: process.env.CIRCLE_MEMBERSHIP_PAYWALL_URL,
 
     SENTRY_DSN: process.env.SENTRY_DSN,
     SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,

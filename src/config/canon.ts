@@ -103,10 +103,6 @@ export const PUBLIC_ROUTES = {
   login: "/login",
   authVerify: (token: string) => `/auth/verify/${token}`,
   memberHome: "/account",
-  /** Phase 3 — where an already-signed-in-via-old-link parent confirms consent and is handed off to Stripe checkout for the membership subscription (Annexe B §4, rebuilt 20 Aug 2026 per R3). */
-  checkoutMembershipJoin: "/checkout/membership-join",
-  /** R3 rebuild — Stripe's successUrl destination after membership payment; shows a "setting up your access" state while the single-use Circle invitation is issued. */
-  checkoutMembershipSuccess: "/checkout/membership-success",
   /** Phase 11 (Annexe A) — active members only. */
   pathway: "/pathway",
   /** Phase 11 — signed-in members only, deliberately unlinked from nav/sitemap/everywhere. Not yet built — blocked on the client's Pathway price (top-level §10 item 3). */
@@ -193,7 +189,12 @@ export const FIT_CHECK_PROCESSING_NOTICE_VERSION = "fit-check-processing-notice-
  * crafted `next` value, since the param round-trips through an email link.
  */
 export const ALLOWED_POST_LOGIN_REDIRECTS: readonly string[] = [
-  PUBLIC_ROUTES.checkoutMembershipJoin,
+  // R5.3 (Build Addendum A v2.8): the website's own membership checkout is
+  // withdrawn — continuation is sold through Circle's native paywall. Old
+  // continue-membership/re-entry email links now land members on
+  // access/pending, which points at the real Circle paywall URL once
+  // CIRCLE_MEMBERSHIP_PAYWALL_URL is set (falls back to a contact link).
+  `${PUBLIC_ROUTES.accessPending}?reason=not_active_member`,
 ];
 
 /** Immutable business rules. See docs/02-CanonicalDecisions.md section 2.3. */
