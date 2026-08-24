@@ -39,6 +39,7 @@ const offers = [
     key: "group" as const,
     founder: "Michela" as const,
     shotNote: "seated",
+    src: "/assets/Michela_Work with us closely.jpg",
     label: "Live, led by Adam and Michela together",
     name: "The Group Programme",
     intro:
@@ -53,6 +54,7 @@ const offers = [
     key: "resets" as const,
     founder: "Adam" as const,
     shotNote: "seated",
+    src: "/assets/Work with us closely Adam.jpg",
     label: "Private, one family at a time",
     name: "The 1:1 Resets",
     intro:
@@ -118,6 +120,7 @@ export default function WorkWithUsPage() {
                   <FounderPortrait
                     founder={offer.founder}
                     shotNote={offer.shotNote}
+                    src={offer.src}
                     aspect="square"
                     className="[&_img]:transition-transform [&_img]:duration-200 [&_img]:ease-out group-hover:[&_img]:scale-[1.02]"
                   />

@@ -74,6 +74,8 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps) 
               <div className="relative border border-dashed border-brand-sage-300/50 bg-brand-sage-100/30 rounded-[18px] p-2 overflow-hidden">
                 <EditorialImage
                   shotNote="Section header: shot 9 or 10, one of you outdoors, soft light, full width with text over it"
+                  src="/assets/Articles_Photo.jpg"
+                  alt="The Confident Learning Co."
                   className="rounded-xl transition-transform duration-500 hover:scale-[1.01]"
                 />
               </div>

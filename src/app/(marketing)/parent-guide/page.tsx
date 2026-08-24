@@ -179,6 +179,8 @@ export default function ParentGuidePage() {
                 <div className="relative border border-dashed border-brand-sage-300/50 bg-brand-sage-100/30 rounded-[18px] p-2 overflow-hidden">
                   <EditorialImage
                     shotNote="Shot 3: Adam seated, warm interior, wide frame"
+                    src="/assets/Parent Guide.jpg"
+                    alt="Adam"
                     className="rounded-xl transition-transform duration-500 group-hover:scale-[1.02]"
                   />
                 </div>
@@ -523,7 +525,7 @@ export default function ParentGuidePage() {
                 </div>
 
                 <div className="relative border border-dashed border-brand-sage-300/50 bg-brand-sage-100/30 rounded-[18px] p-2 overflow-hidden">
-                  <FounderPortrait founder="Michela" shotNote="mid-talk" />
+                  <FounderPortrait founder="Michela" shotNote="mid-talk" src="/assets/Parent Guide_Michela.jpg" />
                 </div>
                 
                 {/* Overlapping botanical leaf badge */}

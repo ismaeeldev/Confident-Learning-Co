@@ -111,7 +111,13 @@ export default function ReflectionPage() {
               {/* Author Capsule Button */}
               <div className="flex items-center gap-2.5 bg-white/70 backdrop-blur-sm border border-brand-cream-300/60 rounded-full pl-1.5 pr-4 py-1 w-fit shadow-[var(--shadow-elevation-1)] mt-1">
                 <div className="size-8 overflow-hidden rounded-full border border-brand-sage-300 shrink-0 bg-brand-sage-100/60 flex items-center justify-center">
-                  <FounderPortrait founder="Adam" shotNote="head and shoulders" compact aspect="square" />
+                  <FounderPortrait
+                    founder="Adam"
+                    shotNote="head and shoulders"
+                    src="/assets/About Adam.jpg"
+                    compact
+                    aspect="square"
+                  />
                 </div>
                 <div className="flex flex-col text-left">
                   <span className="text-[11px] font-bold text-brand-navy-950 leading-none">Created by Adam</span>
@@ -170,6 +176,8 @@ export default function ReflectionPage() {
               <div className="relative border border-dashed border-brand-sage-300/50 bg-brand-sage-100/30 rounded-[14px] p-1.5 overflow-hidden">
                 <EditorialImage
                   shotNote="Shot 11: hands and notebook, no face, calm and quiet banner"
+                  src="/assets/Reflection.jpg"
+                  alt="The Reflection"
                   aspect="square"
                   className="rounded-lg transition-transform duration-500 group-hover:scale-[1.02]"
                 />

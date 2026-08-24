@@ -37,10 +37,12 @@ const founders = [
   {
     founder: "Adam" as const,
     role: "Founder and Learning Confidence Specialist",
+    src: "/assets/Inside the Loop Adam.jpg",
   },
   {
     founder: "Michela" as const,
     role: "Learning Confidence Specialist",
+    src: "/assets/Inside the Loop Michela.jpg",
   },
 ];
 
@@ -137,6 +139,8 @@ export default function InsideTheLoopPage() {
                 <div className="relative border border-dashed border-brand-sage-300/50 bg-brand-sage-100/30 rounded-[18px] p-2 overflow-hidden">
                   <EditorialImage
                     shotNote="Shot 8: the two of you together, to camera"
+                    src="/assets/Inside the Loop top.jpg"
+                    alt="Adam and Michela"
                     className="rounded-xl transition-transform duration-500 group-hover:scale-[1.02]"
                   />
                 </div>
@@ -237,6 +241,7 @@ export default function InsideTheLoopPage() {
                       <FounderPortrait
                         founder={person.founder}
                         shotNote="vertical portrait"
+                        src={person.src}
                         className="rounded-lg [&_img]:transition-transform [&_img]:duration-500 [&_img]:ease-out group-hover:[&_img]:scale-[1.03]"
                       />
                     </div>
@@ -347,6 +352,8 @@ export default function InsideTheLoopPage() {
               <div className="relative border border-dashed border-brand-sage-300/50 bg-brand-sage-100/30 rounded-[18px] p-2 overflow-hidden">
                 <EditorialImage
                   shotNote="Shot 7: the two of you in conversation"
+                  src="/assets/Inside the Loop Bottom.jpg"
+                  alt="Adam and Michela in conversation"
                   className="rounded-xl transition-transform duration-500 hover:scale-[1.01]"
                 />
               </div>

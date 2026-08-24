@@ -134,6 +134,8 @@ export default function HomePage() {
               <Parallax range={14}>
                 <EditorialImage
                   shotNote="Shot 2: Adam, three-quarter, mid-talk, space to one side for headline text"
+                  src="/assets/Homepage Top.jpg"
+                  alt="Adam"
                   className="shadow-[var(--shadow-elevation-3)] ring-brand-cream-100 ring-1"
                 />
               </Parallax>
@@ -361,6 +363,8 @@ export default function HomePage() {
             <Parallax range={16}>
               <EditorialImage
                 shotNote="Shot 7: Adam and Michela together, in conversation, not looking at camera"
+                src="/assets/Homepage bottom.jpg"
+                alt="Adam and Michela in conversation"
                 className="border-brand-sage-600/30 bg-brand-navy-800 text-brand-sage-200 shadow-[var(--shadow-elevation-3)]"
               />
             </Parallax>

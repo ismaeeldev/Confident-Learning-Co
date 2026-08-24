@@ -34,6 +34,7 @@ const founders = [
     name: "Adam",
     role: "Founder and Learning Confidence Specialist, The Confident Learning Co.",
     shotNote: "shot 1 or 9",
+    src: "/assets/About Adam.jpg",
     bio: [
       "Adam has spent his career seeing children from angles most specialists never get: as a teacher, tutor, nanny, au pair, researcher, mentor and coach, across early years settings, primary schools, children’s centres, community play, charities and family advocacy.",
       "That breadth is the point. A child who has lost confidence in learning looks different at school, at home, and at the kitchen table, and Adam has worked in all three rooms. He has seen the six year old who will not pick up a pencil and the sixteen year old who has decided the whole thing is pointless, and he has watched how one becomes the other when nobody interrupts it.",
@@ -44,6 +45,7 @@ const founders = [
     name: "Michela",
     role: "Learning Confidence Specialist, The Confident Learning Co.",
     shotNote: "shot 4 or 10",
+    src: "/assets/About Michela.jpg",
     bio: [
       "Michela brings nearly two decades of experience with young people in Years 7 to 11, in schools and in family homes.",
       "The secondary years are her ground. She has sat with Year 9s choosing options they have already decided they will fail, with Year 11s who stopped revising in October, and with the parents outside those bedroom doors trying to work out whether to push or to leave it.",
@@ -91,6 +93,8 @@ export default function AboutPage() {
               <div className="relative border border-dashed border-brand-sage-300/50 bg-brand-sage-100/30 rounded-[18px] p-2 overflow-hidden">
                 <EditorialImage
                   shotNote="Shot 7: the two of you in conversation, not to camera"
+                  src="/assets/About Top.jpg"
+                  alt="Adam and Michela in conversation"
                   className="rounded-xl transition-transform duration-500 hover:scale-[1.01]"
                 />
               </div>
@@ -147,6 +151,7 @@ export default function AboutPage() {
                         <FounderPortrait
                           founder={person.name}
                           shotNote={person.shotNote}
+                          src={"src" in person ? person.src : undefined}
                           className="rounded-xl transition-transform duration-500 hover:scale-[1.01]"
                         />
                       </div>
