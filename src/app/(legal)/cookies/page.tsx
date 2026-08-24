@@ -10,11 +10,11 @@ export const metadata: Metadata = {
 
 export default function CookiesPage() {
   return (
-    <LegalPage title="Cookies Policy" updatedAt="4 August 2026">
+    <LegalPage title="Cookies Policy" updatedAt="24 August 2026">
       <h2>What are cookies</h2>
       <p>
-        Cookies are small text files stored on your device when you visit a website. They help the
-        site function correctly and, where you consent, help us understand how the site is used.
+        Cookies are small text files stored on your device when you visit a website, used to help
+        the site function correctly or to remember information about your visit.
       </p>
 
       <h2>Cookies we use</h2>
@@ -23,18 +23,19 @@ export default function CookiesPage() {
         <li>Session and security cookies that keep the site working correctly</li>
         <li>Cookies required by Stripe to process payments securely</li>
       </ul>
+
+      <h2>Analytics — no cookies used</h2>
       <p>
-        <strong>Analytics cookies</strong>: only active where analytics are enabled and, where
-        required, only after you consent:
+        We use Vercel Web Analytics to understand how visitors use the site. It does not use
+        cookies or any other persistent identifier on your device — it works by processing page
+        view data anonymously, without tracking you individually across visits or across other
+        websites. Because it sets no cookie, there is nothing here for you to consent to and no
+        cookie preference control is needed for it.
       </p>
-      <ul>
-        <li>Google Analytics, to understand how visitors use the site</li>
-        <li>Microsoft Clarity, to understand on-page behaviour</li>
-      </ul>
-      <p><strong>Marketing cookies</strong>: only active where enabled and consented to:</p>
-      <ul>
-        <li>Meta Pixel, to measure the effectiveness of any social advertising</li>
-      </ul>
+      <p>
+        We do not use Google Analytics, Microsoft Clarity, Meta Pixel, or any other cookie-based
+        analytics or advertising tool.
+      </p>
 
       <h2>Third-party embedded content</h2>
       <p>
@@ -45,10 +46,8 @@ export default function CookiesPage() {
 
       <h2>Managing cookies</h2>
       <p>
-        Where analytics or marketing cookies require consent, a cookie preference control will be
-        provided on this site. You can also control or delete cookies at any time through your
-        browser settings. Blocking essential cookies may affect the site&rsquo;s functionality,
-        including checkout.
+        You can control or delete cookies at any time through your browser settings. Blocking
+        essential cookies may affect the site&rsquo;s functionality, including checkout.
       </p>
 
       <h2>Changes to this policy</h2>

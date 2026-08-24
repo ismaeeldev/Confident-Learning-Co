@@ -3,7 +3,6 @@ import Image from "next/image";
 import { Container } from "@/components/layout/Container";
 import { primaryNavigation, legalNavigation } from "@/config/navigation";
 import { brand, traderIdentity } from "@/config/brand";
-import { CookieSettingsLink } from "@/components/layout/CookieSettingsLink";
 
 export function Footer() {
   const year = new Date().getFullYear();
@@ -62,7 +61,6 @@ export function Footer() {
                   {link.label}
                 </Link>
               ))}
-              <CookieSettingsLink />
             </nav>
             <p className="text-brand-sage-300">
               © {year} {brand.name}. All rights reserved.
