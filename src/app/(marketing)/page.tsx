@@ -136,7 +136,7 @@ export default function HomePage() {
                   shotNote="Shot 2: Adam, three-quarter, mid-talk, space to one side for headline text"
                   src="/assets/Homepage Top.jpg"
                   alt="Adam"
-                  positionY="15%"
+                  positionY="35%"
                   className="shadow-[var(--shadow-elevation-3)] ring-brand-cream-100 ring-1"
                 />
               </Parallax>
@@ -219,9 +219,8 @@ export default function HomePage() {
                 {ageMoments.map((moment, index) => (
                   <div
                     key={moment.age}
-                    className={`relative py-6 sm:py-7 ${
-                      index !== ageMoments.length - 1 ? "border-border/60 border-b" : ""
-                    }`}
+                    className={`relative py-6 sm:py-7 ${index !== ageMoments.length - 1 ? "border-border/60 border-b" : ""
+                      }`}
                   >
                     <span
                       aria-hidden="true"
