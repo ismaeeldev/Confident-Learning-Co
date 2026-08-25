@@ -26,6 +26,6 @@ export const legalNavigation: NavLink[] = [
   { label: "Privacy", href: PUBLIC_ROUTES.privacy },
   { label: "Terms", href: PUBLIC_ROUTES.terms },
   { label: "Community Terms of Use", href: PUBLIC_ROUTES.communityTerms },
-  { label: "Cookies", href: PUBLIC_ROUTES.cookies },
+  { label: "Cookies and tracking", href: PUBLIC_ROUTES.cookies },
   { label: "Refund Policy", href: PUBLIC_ROUTES.refundPolicy },
 ];

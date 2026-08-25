@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { LegalPage } from "@/components/content/LegalPage";
+import { AnalyticsToggle } from "@/components/content/AnalyticsToggle";
 import { brand } from "@/config/brand";
 
 export const metadata: Metadata = {
@@ -29,13 +30,14 @@ export default function CookiesPage() {
         We use Vercel Web Analytics to understand how visitors use the site. It does not use
         cookies or any other persistent identifier on your device — it works by processing page
         view data anonymously, without tracking you individually across visits or across other
-        websites. Because it sets no cookie, there is nothing here for you to consent to and no
-        cookie preference control is needed for it.
+        websites.
       </p>
       <p>
         We do not use Google Analytics, Microsoft Clarity, Meta Pixel, or any other cookie-based
         analytics or advertising tool.
       </p>
+      <p>Analytics is on by default. You can switch it off for your browser below.</p>
+      <AnalyticsToggle />
 
       <h2>Third-party embedded content</h2>
       <p>

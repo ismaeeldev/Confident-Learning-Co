@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Inter, Newsreader } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { JsonLd } from "@/components/content/JsonLd";
+import { AnalyticsGate } from "@/components/analytics/AnalyticsGate";
 import { ServiceWorkerRegistration } from "@/components/ServiceWorkerRegistration";
 import { brand } from "@/config/brand";
 import { organizationJsonLd } from "@/lib/structuredData";
@@ -56,18 +56,16 @@ export default function RootLayout({
           <ServiceWorkerRegistration />
         </TooltipProvider>
         {/*
-          Client instruction (24 Aug 2026): use Vercel Web Analytics only,
-          remove Microsoft Clarity and the cookie consent banner entirely.
-          Vercel Web Analytics is cookieless — it does not use cookies or
-          any persistent client-side identifier, so there is nothing here
-          for a visitor to consent to under PECR, and no consent banner is
-          required for it. This replaces the previous GA4/Clarity/Meta
-          Pixel consent-gated setup (src/components/analytics/AnalyticsLoader.tsx,
-          ConsentBanner.tsx), both removed — none of those were ever
-          actually configured with a live ID, so nothing observable
-          changes for a visitor except the banner disappearing.
+          Client instruction (24 Aug 2026, refined 25 Aug 2026): Vercel
+          Web Analytics only, Microsoft Clarity removed. Cookieless
+          doesn't remove the UK consent requirement on its own, so this
+          isn't a banner — it's a persistent "Cookies and tracking" link
+          in the footer leading to a single on/off toggle, defaulting to
+          on (see AnalyticsToggle.tsx on /cookies). AnalyticsGate reads
+          that stored choice and renders (or withholds) Analytics
+          accordingly.
         */}
-        <Analytics />
+        <AnalyticsGate />
       </body>
     </html>
   );
