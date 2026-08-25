@@ -16,7 +16,7 @@ export const metadata: Metadata = {
  */
 export default function CommunityTermsPage() {
   return (
-    <LegalPage title="Community Terms of Use" updatedAt="24 August 2026 (v1.4)">
+    <LegalPage title="Community Terms of Use" updatedAt="24 August 2026" version="1.4" isDraft={false}>
       <p>Inside the Loop, the membership community of The Confident Learning Co.</p>
 
       <p>

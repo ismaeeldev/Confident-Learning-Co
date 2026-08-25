@@ -6,7 +6,6 @@ import { PUBLIC_ROUTES } from "@/config/canon";
 export const metadata: Metadata = {
   title: "Refunds and Cancellations",
   description: `Refunds and cancellations at ${brand.name}`,
-  robots: { index: false, follow: true },
 };
 
 /**
@@ -25,7 +24,7 @@ export const metadata: Metadata = {
  */
 export default function RefundPolicyPage() {
   return (
-    <LegalPage title="Refunds and Cancellations" updatedAt="20 August 2026 (v1.2)">
+    <LegalPage title="Refunds and Cancellations" updatedAt="20 August 2026" version="1.2" isDraft={false}>
       <p>
         <em>What happens if you change your mind, or something is not right.</em>
       </p>

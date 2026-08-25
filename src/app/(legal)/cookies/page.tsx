@@ -6,7 +6,6 @@ import { brand } from "@/config/brand";
 export const metadata: Metadata = {
   title: "Cookies Policy",
   description: `How ${brand.name} uses cookies.`,
-  robots: { index: false, follow: true },
 };
 
 export default function CookiesPage() {
