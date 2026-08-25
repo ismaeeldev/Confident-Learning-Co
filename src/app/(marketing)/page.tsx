@@ -136,7 +136,7 @@ export default function HomePage() {
                   shotNote="Shot 2: Adam, three-quarter, mid-talk, space to one side for headline text"
                   src="/assets/Homepage Top.jpg"
                   alt="Adam"
-                  positionY="80%"
+                  positionY="15%"
                   className="shadow-[var(--shadow-elevation-3)] ring-brand-cream-100 ring-1"
                 />
               </Parallax>
