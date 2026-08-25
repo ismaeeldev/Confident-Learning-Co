@@ -83,10 +83,21 @@ export async function FoundersPricingBlock() {
           />
         )}
 
+        {/*
+          R1.2 (Outstanding Build Requirements v2.9, IMPORTANT): the old
+          wording promised unconditional delivery "within minutes," which
+          is false for any buyer who declines the optional immediate-supply
+          pair at checkout (their download is held for 14 days instead).
+          That's exactly the promise a complaint would quote. Replaced with
+          the client's exact required wording — conditional on asking for
+          immediate access, and deliberately says nothing further, since
+          the held case is already explained on the consent/checkout page
+          and in the confirmation email.
+        */}
         <p className="text-muted-foreground flex items-center justify-center gap-2 text-xs text-center mt-2 max-w-sm">
           <ShieldCheck className="text-brand-sage-700 size-4 shrink-0" aria-hidden="true" />
-          Secure checkout through Stripe. The Guide and your community invitation arrive by email
-          within minutes.
+          Secure checkout through Stripe. If you ask for immediate access at checkout, the Guide
+          and your community invitation arrive by email within minutes.
         </p>
       </div>
     </>
