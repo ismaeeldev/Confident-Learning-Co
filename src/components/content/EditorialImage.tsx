@@ -11,19 +11,18 @@ interface EditorialImageProps {
   src?: string;
   /** Required alt text once a real src is supplied. */
   alt?: string;
-  /** Crop focal point within the frame when the image is cropped to fit its aspect ratio. Defaults to centered. */
-  position?: "center" | "top" | "bottom";
+  /**
+   * Vertical crop focal point when the image is cropped to fit its aspect
+   * ratio, as a CSS object-position Y value (e.g. "20%", "80%", "top",
+   * "center"). A higher percentage crops more off the top of the source
+   * image, keeping the lower portion visible. Defaults to centered.
+   */
+  positionY?: string;
 }
 
 const aspectClasses = {
   banner: "aspect-3/2",
   square: "aspect-square",
-} as const;
-
-const positionClasses = {
-  center: "object-center",
-  top: "object-top",
-  bottom: "object-bottom",
 } as const;
 
 /** Environmental/editorial image (3:2 banner by default). Renders a real photo when `src` is supplied, otherwise a labeled placeholder pending real photography or licensed stock. */
@@ -33,7 +32,7 @@ export function EditorialImage({
   className,
   src,
   alt,
-  position = "center",
+  positionY = "center",
 }: EditorialImageProps) {
   if (src) {
     return (
@@ -43,7 +42,8 @@ export function EditorialImage({
           alt={alt ?? shotNote}
           fill
           sizes="(min-width: 1024px) 50vw, 100vw"
-          className={cn("object-cover", positionClasses[position])}
+          className="object-cover"
+          style={{ objectPosition: `center ${positionY}` }}
         />
       </div>
     );

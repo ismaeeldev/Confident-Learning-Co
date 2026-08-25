@@ -134,9 +134,9 @@ export default function HomePage() {
               <Parallax range={14}>
                 <EditorialImage
                   shotNote="Shot 2: Adam, three-quarter, mid-talk, space to one side for headline text"
-                  src="/assets/Homepage Top.png"
+                  src="/assets/Homepage Top.jpg"
                   alt="Adam"
-                  position="top"
+                  positionY="80%"
                   className="shadow-[var(--shadow-elevation-3)] ring-brand-cream-100 ring-1"
                 />
               </Parallax>
