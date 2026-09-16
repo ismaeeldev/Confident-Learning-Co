@@ -55,7 +55,8 @@ const founders = [
   {
     name: "Jane",
     role: "Pathway Coordinator, The Confident Learning Co.",
-    shotNote: "get a real portrait before launch",
+    shotNote: "portrait",
+    src: "/assets/Jane profile pic.jpg",
     bio: [
       "Jane is the first person you speak to when you are considering working with us closely. Her job is not to sell you anything. Jane listens properly and takes it back to Adam and Michela. If anything in your situation needs different support first, she will tell you plainly and point you toward it.",
     ],
@@ -93,7 +94,7 @@ export default function AboutPage() {
               <div className="relative border border-dashed border-brand-sage-300/50 bg-brand-sage-100/30 rounded-[18px] p-2 overflow-hidden">
                 <EditorialImage
                   shotNote="Shot 7: the two of you in conversation, not to camera"
-                  src="/assets/About Top.jpg"
+                  src="/assets/About page - top replacement photo.jpg"
                   alt="Adam and Michela in conversation"
                   className="rounded-xl transition-transform duration-500 hover:scale-[1.01]"
                 />

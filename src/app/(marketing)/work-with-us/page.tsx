@@ -203,6 +203,7 @@ export default function WorkWithUsPage() {
               <FounderPortrait
                 founder="Jane"
                 shotNote="portrait"
+                src="/assets/Jane profile pic.jpg"
                 compact
                 className="mx-auto size-28 sm:size-32"
               />
